@@ -1,23 +1,26 @@
 import json 
 
 def load_admins():
-    with open("admins.json", "r") as f:
+    with open("students.json", "r") as f:
         return json.load(f)
 
-def save_admins(admins):
-    with open("admins.json", "w") as f:
-        json.dump(admins, f, indent=4)
+def save_admins(students):
+    with open("students.json", "w") as f:
+        json.dump(students, f, indent=5)
 
 def main() :
 # usage
-    admins = load_admins()
+    students = load_admins()
 
 
-    username = input("\nUsername: ")
-    password = input("Password: ")
+    user_id = input("id: ")
+    name = input("name: ")
+    email = input("Email: ")
+    year = input("Year: ")
+    gpa = input("GPA: ")
 
-    admins.append({"username": username, "password": password})
-    save_admins(admins)
+    students.append({"id": user_id, "username": name, "email": email, "year": year, "gpa": gpa})
+    save_admins(students)
     print(load_admins())
 if __name__ == "__main__":
     
