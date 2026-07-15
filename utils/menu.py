@@ -1,21 +1,21 @@
 from services.admin_service import AdminService
-from data import admins
+from data import admins, students
 import json 
 
 admin_service = AdminService()
 
 def show_main_menu():
-    print("1. Admin Menu")
-    print("2. Stdent Menu")
-    print("3. View Admin")
-    print("4. View Student")
-    print("5. Exit")
+    print("1. Admin Menu.")
+    print("2. Student Menu.")
+    print("3. View Students.")
+    print("4. Exit.")
     
 def login(username, password):
         for i in range(len(admins)):
             if admins[i]["username"] == username and admins[i]["password"] == password:
                 print(f"Login successful. Welcome, {admins[i]['username']} (admin ID {i})")
-                return admins[i]  # or return i, whatever you need
+                show_admin_menu()
+                return bool  # or return i, whatever you need
         
         print("Invalid username or password")
 
@@ -32,6 +32,7 @@ def get_admins() :
 def show_admin_menu():
     
     print("=" * 30)
+    print(" " * 4, end= " ")
     print("Welcome to Admin Menu")
     print("=" * 30)
     print("\nAdmin Menu")
@@ -49,10 +50,12 @@ def show_admin_menu():
         
         if choice == "1":
             student_id = int(input("Enter student ID: "))
-            name = input("Enter student name: ")
-            email = input("Enter student email: ")
-            gpa = input("Enter student GPA: ")
-            admin_service.add_student(student_id, name,email, gpa)
+            name = str(input("Enter student name: "))
+            email = str(input("Enter student email: "))
+            year = int(input("Enter student year: "))
+            gpa = float(input("Enter student GPA: "))
+            
+            admin_service.add_student(student_id, name, email, year, gpa)
             print("Student added successfully")
                     
         elif choice == "2":
@@ -90,3 +93,13 @@ def show_student_menu():
     print("=" * 40)
     print("\n1. View Profile.")
     print("2. View Regitstered courses.")
+    
+def get_student():
+    print("Student List.")
+    print("=" * 35)
+    with open("students.json", "r") as f:
+        students = json.load(f)  # renamed, and loop over this
+    for student in students:
+        print(f"Student: id: {student['id']}, name: {student['name']}")
+        
+    

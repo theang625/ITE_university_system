@@ -4,9 +4,10 @@ from models.student import Student
 from dsa.hash_table import HashTable
 from dsa.binary_tree import BinaryTree
 from dsa.graph import Graph
+from models.student import Student
 import json
+import os
  
-
 class AdminService:
     def __init__(self):
         self.admins = []
@@ -20,11 +21,26 @@ class AdminService:
         self.admins_table.insertion(admin_id, name)
         return admin
 
-    def add_student(self, student_id, name, email, gpa):
-        student = Student(student_id, name, email, gpa)
-        HashTable.student_insert(student_id, name, email, gpa)
-        self.enrollment_graph.add_vertex(student_id)
-        return student
+    def add_student(self, student_id, name, email, year, gpa):
+        students = Student.load_students()  # no instance needed
+
+        if any(s["student_id"] == student_id for s in students):
+            print(f"Student ID {student_id} already exists.")
+            return None
+
+        new_student = {
+            "student_id": student_id,
+            "name": name,
+            "email": email,
+            "year": year,
+            "gpa": gpa,
+        }
+
+        students.append(new_student)
+        Student.save_students(students)
+
+        print(f"Student '{name}' added successfully.")
+        return new_student
 
     def delete_student(self, student_id):
         deleted = self.students_table.delete(student_id)

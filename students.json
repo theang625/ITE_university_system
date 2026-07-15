@@ -1,14 +1,23 @@
 [
     {
-        "id": 1001,
+        "student_id": 1001,
         "name": "Alice",
         "email": "alice@univ.com",
+        "year": 2024,
         "gpa": 3.5
     },
     {
-        "id": 1002,
+        "student_id": 1002,
         "name": "Bob",
         "email": "bob@univ.com",
+        "year": 2024,
         "gpa": 3.2
+    },
+    {
+        "student_id": 12,
+        "name": "theang",
+        "email": "afaskfhaf.som",
+        "year": 2322,
+        "gpa": 1.4
     }
 ]

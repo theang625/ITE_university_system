@@ -1,13 +1,11 @@
-from services.admin_service import AdminService
-from utils.menu import show_admin_menu, show_main_menu, show_student_menu, login, get_admins
-from data import admins
-
+from utils.menu import show_admin_menu, show_main_menu, show_student_menu, login, get_admins, get_student
+import json
 
 def main():
-    admin_service = AdminService()
      
     print("This is the main menu of the university system.")
     while True :
+        
         show_main_menu()
         choice = input("Enter your choice: ")
         
@@ -17,26 +15,24 @@ def main():
             username = input("Enter your username: ")
             password = input("Enter your password: ")
             login_account = login(username, password)
-            if login_account: 
-                return show_admin_menu()
+            if not login_account: 
+                return show_main_menu()
             
-        if choice == "2":
+        elif choice == "2":
             print("Please enter student name and password")
             show_student_menu()
-                        
-        if choice == "3":
-            print("View admin.")
-            print(get_admins(), end="\n")
             
-        if choice == "4":
+        elif choice == "3":
             print("View student.")
+            print("=" * 35)
+            print(get_student())
             
-        if choice == "5":
+        elif choice == "4":
             print("Exit")
             break
         
-        else: 
-            print("Invalid choice, use only number for the choices.")
+        else:
+            print("Invalid choice")
     
 if __name__ == "__main__":
     
