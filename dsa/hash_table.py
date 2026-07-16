@@ -63,3 +63,7 @@ class HashTable:
             for _, value in bucket:
                 values.append(value)
         return values
+
+    def print_table(self):
+        for i, bucket in enumerate(self.table):
+            print(f"Bucket {i}: {bucket}")
