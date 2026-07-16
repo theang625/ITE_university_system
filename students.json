@@ -19,5 +19,12 @@
         "email": "afaskfhaf.som",
         "year": 2322,
         "gpa": 1.4
+    },
+    {
+        "student_id": 23,
+        "name": "hello",
+        "email": "sfhjsflksfja.ocm",
+        "year": 2204,
+        "gpa": 2.45
     }
 ]
