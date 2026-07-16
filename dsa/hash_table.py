@@ -1,7 +1,7 @@
 import json
 import math
 import os
-
+from services import admin_service
 
 class HashTable:
     def __init__(self, size=50):
@@ -19,6 +19,7 @@ class HashTable:
     # Insert Student
     # ----------------------------
     def insert(self, student):
+        
         key = student["id"]
         index = self._hash(key)
 

@@ -1,12 +1,5 @@
 [
     {
-        "enrollment_id": 2,
-        "student_id": 2,
-        "course_id": 1,
-        "grade": null,
-        "enrolled_date": "2026-01-12"
-    },
-    {
         "enrollment_id": 3,
         "student_id": 3,
         "course_id": 5,

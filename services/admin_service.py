@@ -12,7 +12,7 @@ import os
 class AdminService:
     def __init__(self):
         self.admins = []
-        self.admins_table = HashTable()
+        self.hash_table = HashTable()
         self.courses_tree = BinaryTree()
         self.enrollment_graph = Graph()
 
@@ -21,13 +21,6 @@ class AdminService:
         
         self.admins_table.insertion(admin_id, name)
         return admin
-    
-    def check_by_id(self, student_id):
-        students = Student.load_students()
-        
-        if any(s["student_id"] == student_id for s in students):
-            print(f"Student ID {student_id} already exists.")
-            return None
 
     def add_student(self, student_id, name, email, year, gpa):
         students = Student.load_students()  # no instance needed
@@ -39,11 +32,14 @@ class AdminService:
             "year": year,
             "gpa": gpa,
         }
-
-        students.append(new_student)
-        Student.save_students(students)
-
-        print(f"Student '{name}' added successfully.") 
+        
+        if any(s["student_id"] == student_id for s in students):
+            print(f"Student ID {student_id} already exists. With name: {name}")
+            return None
+        else:
+            students.append(new_student)
+            Student.save_students(students)
+            print(f"Student '{name}' added successfully.") 
         
         return new_student
 
