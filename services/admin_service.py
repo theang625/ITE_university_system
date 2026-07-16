@@ -4,6 +4,8 @@ from models.student import Student
 from dsa.hash_table import HashTable
 from dsa.binary_tree import BinaryTree
 from dsa.graph import Graph
+from models.student import Student
+from models.enrollment import Enrollment
 import json
 import os
  
@@ -37,21 +39,32 @@ class AdminService:
             "year": year,
             "gpa": gpa,
         }
+
+        students.append(new_student)
+        Student.save_students(students)
+
+        print(f"Student '{name}' added successfully.") 
         
-        if any(s["student_id"] == student_id for s in students):
-            print(f"Student ID {student_id} already exists.")
-            return None
-        else: 
-            students.append(new_student)
-            Student.save_students(students)
-            print(f"Student '{name}' added successfully.")
-            return new_student 
+        return new_student
 
     def delete_student(self, student_id):
-        deleted = self.students_table.delete(student_id)
-        if deleted:
-            self.enrollment_graph.remove_vertex(student_id)
-        return deleted
+        students = Student.load_students()
+
+        student_exists = any(s["student_id"] == student_id for s in students)
+        if not student_exists:
+            print(f"Student ID {student_id} not found.")
+            return False
+
+        students = [s for s in students if s["student_id"] != student_id]
+        Student.save_students(students)
+
+        # clean up this student's enrollment records too
+        enrollments = Enrollment.load_enrollments()
+        enrollments = [e for e in enrollments if e["student_id"] != student_id]
+        Enrollment.save_enrollments(enrollments)
+
+        print(f"Student ID {student_id} deleted successfully.")
+        return True
 
     def update_student(self, student_id, name=None, email=None):
         student = self.students_table.get(student_id)
