@@ -138,5 +138,12 @@
         "email": "san.vichit20@gmail.com",
         "year": 3,
         "gpa": 3.5
+    },
+    {
+        "student_id": 22,
+        "name": "dd",
+        "email": "dd",
+        "year": 1,
+        "gpa": 1.0
     }
 ]

@@ -63,21 +63,51 @@ class AdminService:
         print(f"Student ID {student_id} deleted successfully.")
         return True
 
-    def update_student(self, student_id, name=None, email=None):
-        student = self.students_table.get(student_id)
+    def update_student(self, student_id, name=None, email=None, year=None, gpa=None):
+        students = Student.load_students()
+
+        student = None
+        for s in students:
+            if s["student_id"] == student_id:
+                student = s
+                break
+
         if student is None:
+            print(f"Student ID {student_id} not found.")
             return None
-        if name is not None:
-            student.name = name
+
         if email is not None:
-            student.email = email
+            email_taken = any(
+                s["email"] == email and s["student_id"] != student_id
+                for s in students
+            )
+            if email_taken:
+                print(f"Email '{email}' is already used by another student.")
+                return None
+
+        if name is not None:
+            student["name"] = name
+        if email is not None:
+            student["email"] = email
+        if year is not None:
+            student["year"] = year
+        if gpa is not None:
+            student["gpa"] = gpa
+
+        Student.save_students(students)
+
+        print(f"Student ID {student_id} updated successfully.")
         return student
 
     def view_students(self):
-        return self.students_table.values()
+        return Student.load_students()
 
     def get_student(self, student_id):
-        return self.students_table.get(student_id)
+        students = Student.load_students()
+        for s in students:
+            if s["student_id"] == student_id:
+                return s
+        return None
 
     def add_course(self, course_id, title, credits):
         course = Course(course_id, title, credits)
