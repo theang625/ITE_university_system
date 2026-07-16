@@ -1,19 +1,5 @@
 [
     {
-        "student_id": 1,
-        "name": "Nim Cheyseth",
-        "email": "nim.cheyseth1@gmail.com",
-        "year": 1,
-        "gpa": 3.82
-    },
-    {
-        "student_id": 2,
-        "name": "Sok Dara",
-        "email": "sok.dara2@gmail.com",
-        "year": 1,
-        "gpa": 3.65
-    },
-    {
         "student_id": 3,
         "name": "Chan Visal",
         "email": "chan.visal3@gmail.com",

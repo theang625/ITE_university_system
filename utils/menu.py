@@ -1,5 +1,6 @@
 from services.admin_service import AdminService
 from data import admins, students
+from models.student import Student
 import json 
 
 admin_service = AdminService()
@@ -24,11 +25,13 @@ def get_admins() :
     
     with open("admins.json", "r") as f:
         admins = json.load(f)
+        
     for admin in admins:
         print(f"Username: {admin['username']}")
     return show_main_menu()
         
 def show_admin_menu():
+    
     while True:
         print("=" * 30)
         print(" " * 4, end=" ")
@@ -70,8 +73,12 @@ def show_admin_menu():
             print("Student updated successfully")
 
         elif choice == "4":
-            for student in admin_service.view_students():
-                print(student)
+            # Read file from json and display
+            with open("students.json", "r") as f:
+                students = json.load(f)
+            
+            for student in students:
+                print(f"[Student]: [id: {student['student_id']}, name: {student['name']}]")
 
         elif choice == "5":
             course_id = input("Enter course ID: ")
