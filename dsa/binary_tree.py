@@ -4,7 +4,6 @@ class Node:
         self.left = None
         self.right = None
 
-
 class BinaryTree:
     def __init__(self):
         self.root = None

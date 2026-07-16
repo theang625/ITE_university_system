@@ -5,10 +5,10 @@ import json
 admin_service = AdminService()
 
 def show_main_menu():
-    print("1. Admin Menu.")
-    print("2. Student Menu.")
-    print("3. View Students.")
-    print("4. Exit.")
+    print("\t1. Admin Menu.")
+    print("\t2. Student Menu.")
+    print("\t3. View Students.")
+    print("\t4. Exit.")
     
 def login(username, password):
         for i in range(len(admins)):
@@ -25,6 +25,7 @@ def get_admins() :
     
     with open("admins.json", "r") as f:
         admins = json.load(f)
+        
     for admin in admins:
         print(f"Username: {admin['username']}")
     return show_main_menu()
@@ -35,14 +36,14 @@ def show_admin_menu():
     print(" " * 4, end= " ")
     print("Welcome to Admin Menu")
     print("=" * 30)
-    print("\nAdmin Menu")
-    print("1. Add Student")
-    print("2. Delete Student")
-    print("3. Update Student")
-    print("4. View Students")
-    print("5. Add Course")
-    print("6. Delete Course")
-    print("7. Logout")
+    print("\n\tAdmin Menu")
+    print("\t1. Add Student")
+    print("\t2. Delete Student")
+    print("\t3. Update Student")
+    print("\t4. View Students")
+    print("\t5. Add Course")
+    print("\t6. Delete Course")
+    print("\t7. Logout")
     
     choice = input("Enter your choice for admin menu: ")
     
@@ -55,8 +56,11 @@ def show_admin_menu():
             year = int(input("Enter student year: "))
             gpa = float(input("Enter student GPA: "))
             
-            admin_service.add_student(student_id, name, email, year, gpa)
-            print("Student added successfully")
+            result = admin_service.add_student(student_id, name, email, year, gpa)
+            
+            if result:
+                print("Student added successfully")
+            show_admin_menu()
                     
         elif choice == "2":
             student_id = int(input("Enter student ID to delete: "))
