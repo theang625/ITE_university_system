@@ -1,5 +1,6 @@
 class Node:
     def __init__(self, value):
+        # value ទីនេះគឺជា Tuple (key, data) -> ឧទាហរណ៍: (3.85, student_info)
         self.value = value
         self.left = None
         self.right = None
@@ -75,3 +76,17 @@ class BinaryTree:
         while current.left is not None:
             current = current.left
         return current
+
+   #gpa ranking big to small
+    def get_gpa_ranking(self):
+
+        result = []
+        self._reverse_inorder(self.root, result)
+        return result
+
+    def _reverse_inorder(self, node, result):
+        if node is None:
+            return
+        self._reverse_inorder(node.right, result)
+        result.append(node.value)
+        self._reverse_inorder(node.left, result)
