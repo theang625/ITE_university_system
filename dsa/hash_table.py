@@ -1,79 +1,99 @@
-import math
 import json
-from models.student import Student
+import math
+import os
+
 
 class HashTable:
-    def __init__(self, size=10):
+    def __init__(self, size=50):
         self.size = size
         self.table = [[] for _ in range(size)]
 
-    def multiplication_hash(self, phone):
-        # M is the size of the hash table
-        M = self.size 
-        
-        # A is a constant (The Golden Ratio conjugate is a common choice)
-        A = 0.618033 
-    
-        # Take the floor of the result to get an integer index
-        hash_value = math.floor(M * ((phone * A) % 1))
-        
-        return hash_value
+    # ----------------------------
+    # Hash Function
+    # ----------------------------
+    def _hash(self, key):
+        A = 0.6180339887
+        return math.floor(self.size * ((int(key) * A) % 1))
 
-    def student_insert(self, user_id, name, email, gpa):
-        
-        # Get the index for this phone number
-        index = self.multiplication_hash(user_id)
-        
-        # Check if the phone number already exists in this bucket
-        for imformation in self.table[index]:
-            if imformation["name"] == name:
-                print("User already exists!")
+    # ----------------------------
+    # Insert Student
+    # ----------------------------
+    def insert(self, student):
+        key = student["id"]
+        index = self._hash(key)
+
+        # Update if already exists
+        for item in self.table[index]:
+            if item["id"] == key:
+                item.update(student)
                 return
-                
-        # Create a new contact dictionary
-        imformation = {
-            "user_id" : id,
-            "name": name,
-            "phone": email,
-            "gpa" : gpa
-        }
-                
-        # Add the contact to the bucket (Chaining)
-        self.table[index].append(imformation)
-        print(f"Insertion: [{user_id}, {name} -> {email}]")
 
+        self.table[index].append(student)
+
+    # ----------------------------
+    # Search Student
+    # ----------------------------
     def get(self, key):
         index = self._hash(key)
+
         for item in self.table[index]:
-            if item[0] == key:
-                return item[1]
+            if item["id"] == key:
+                return item
+
         return None
 
+    # ----------------------------
+    # Delete Student
+    # ----------------------------
     def delete(self, key):
         index = self._hash(key)
+
         for item in self.table[index]:
-            if item[0] == key:
+            if item["id"] == key:
                 self.table[index].remove(item)
                 return True
+
         return False
 
+    # ----------------------------
+    # Update Student
+    # ----------------------------
+    def update(self, key, **kwargs):
+        student = self.get(key)
+
+        if student:
+            student.update(kwargs)
+            return True
+
+        return False
+
+    # ----------------------------
+    # Return all students
+    # ----------------------------
     def values(self):
-        values = []
+        students = []
+
         for bucket in self.table:
-            for _, value in bucket:
-                values.append(value)
-        return values
-class function:
-    def __init__(self, name, phone):
-        self.name = name
-        self.phone = phone
+            students.extend(bucket)
 
-    def to_dict(self):
-        return {
-            "name": self.name,
-            "phone": self.phone
-        }
+        return students
 
-    @classmethod
-    def from_dict(cls, data):
-        return cls(data["name"], data["phone"])
+    # ----------------------------
+    # Load JSON File
+    # ----------------------------
+    def load_json(self, filename):
+        if not os.path.exists(filename):
+            return
+
+        with open(filename, "r", encoding="utf-8") as file:
+            data = json.load(file)
+
+        for student in data:
+            self.insert(student)
+
+    # ----------------------------
+    # Save JSON File
+    # ----------------------------
+    def save_json(self, filename):
+        with open(filename, "w", encoding="utf-8") as file:
+            json.dump(self.values(), file, indent=4)
