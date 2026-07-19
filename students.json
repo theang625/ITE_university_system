@@ -126,10 +126,10 @@
         "gpa": 3.5
     },
     {
-        "student_id": 21,
-        "name": "a",
-        "email": "a",
-        "year": 2,
-        "gpa": 4.0
+        "student_id": 22,
+        "name": "dd",
+        "email": "dd",
+        "year": 1,
+        "gpa": 1.0
     }
 ]
