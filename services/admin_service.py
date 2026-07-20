@@ -6,16 +6,13 @@ from models.student import Student
 from models.enrollment import Enrollment
 from dsa.hash_table import HashTable
 from dsa.binary_tree import BinaryTree
-from dsa.graph import Graph
-
 
 class AdminService:
     def __init__(self):
         # 1. Initialize Data Structures
         self.students_table = HashTable()
         self.courses_tree = BinaryTree()
-        self.enrollment_graph = Graph()
-        self.prereq_graph = Graph()  # Dedicated graph for course prerequisites
+  # Dedicated graph for course prerequisites
 
         # 2. Load Data into Memory on Startup
         self._load_table_from_json()
@@ -158,12 +155,19 @@ class AdminService:
     # ==========================================
     # COURSE & ENROLLMENT OPERATIONS
     # ==========================================
-    def add_course(self, course_id, title, credits):
-        course = Course(course_id, title, credits)
-        self.courses_tree.insert(course_id, course)
-        self.enrollment_graph.add_vertex(course_id)
-        # Note: You should also append this to couse.json in the future
-        return course
+    def add_course(self, course_id, course_code, course_name, year_level, active =  True):
+        
+        new_course = {
+            "course_id": course_id,
+            "course_code": course_code,
+            "course_name": course_name,
+            "year_level": year_level,
+            "active": active
+        }
+        # self.courses_tree.insert(course_id, course)
+        # self.enrollment_graph.add_vertex(course_id)
+        # # Note: You should also append this to couse.json in the future
+        # return course
 
     def delete_course(self, course_id):
         self.courses_tree.remove(course_id)

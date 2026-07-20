@@ -6,11 +6,13 @@ import json
 
 admin_service = AdminService()
 
-
 def show_main_menu():
-    print("1. Admin Menu.")
-    print("2. Student Menu.")
-    print("3. Exit.")
+    print("MAIN MENU".center(45))
+    print("=" * 45)
+    print("  1. Admin Login")
+    print("  2. Student Login")
+    print("  3. Exit")
+    print("=" * 45)
 
 
 def login(username, password):
@@ -26,10 +28,9 @@ def login(username, password):
 
 # --- NEW FUNCTION ADDED HERE ---
 def student_login(username, password):
-    file_path = "Userstudent.json"
 
     try:
-        with open(file_path, "r") as f:
+        with open("Userstudent.json", "r") as f:
             users = json.load(f)
 
         for user in users:
@@ -46,10 +47,9 @@ def student_login(username, password):
         return False
 
     except FileNotFoundError:
-        print(f"Error: Could not find {file_path}. Please check the file name.")
+        print(f"Error: Could not find {"Userstudent.json"}. Please check the file name.")
         return False
-
-
+    
 # -------------------------------
 
 def get_admins():
@@ -62,19 +62,21 @@ def get_admins():
 
 
 def show_admin_menu():
+    
     while True:
-        print("=" * 30)
+        print("=" * 35)
         print(" " * 4, end=" ")
-        print("Welcome to Admin Menu")
-        print("=" * 30)
-        print("\nAdmin Menu")
-        print("1. Add Student")
-        print("2. Delete Student")
-        print("3. Update Student")
-        print("4. View Students")
-        print("5. Enter student ID to search")
-        print("6. Delete Course")
-        print("7. Logout")
+        print("  Welcome to Admin Menu")
+        print("=" * 35)
+        print("\nAdmin Menu.")
+        print("1. Add Student.")
+        print("2. Delete Student.")
+        print("3. Update Student.")
+        print("4. View Students.")
+        print("5. Enter student ID to search.")
+        print("6. Add Course.")
+        print("7. Delete Course.")
+        print("8. Logout.")
 
         choice = input("Enter your choice for admin menu: ")
 
@@ -111,7 +113,6 @@ def show_admin_menu():
 
         elif choice == "4":
             print(admin_service.view_students())
-            print("=" * 35)
 
         elif choice == "5":
             student_id = int(input("Enter student ID to search: "))
@@ -123,23 +124,22 @@ def show_admin_menu():
                 print(f"Email: {student['email']}")
                 print(f"Year: {student['year']}")
                 print(f"GPA: {student['gpa']}")
-                print("=" * 35)
             else:
                 print(f"Student ID {student_id} not found.")
 
-        elif choice == "":
+        elif choice == "6":
             course_id = input("Enter course ID: ")
             title = input("Enter course title: ")
             credits = int(input("Enter credits: "))
             admin_service.add_course(course_id, title, credits)
             print("Course added successfully")
 
-        elif choice == "6":
+        elif choice == "7":
             course_id = input("Enter course ID to delete: ")
             admin_service.delete_course(course_id)
             print("Course deleted successfully")
 
-        elif choice == "7":
+        elif choice == "8":
             print("Logged out")
             break
 
@@ -150,9 +150,9 @@ def show_admin_menu():
 # Add student_id as a parameter
 def show_student_menu(student_id):
     while True:
-        print("=" * 40)
-        print("Welcome to Student Menu")
-        print("=" * 40)
+        print("\n" + "-" * 45)
+        print(" " * 14 + "STUDENT MENU")
+        print("-" * 45)
         print("\n1. View Profile.")
         print("2. View Registered courses.")
         print("3. Go back to Main Menu.")
@@ -163,15 +163,15 @@ def show_student_menu(student_id):
             # REPLACED PLACEHOLDER: Fetch and display actual data!
             student = admin_service.get_student(student_id)
             if student:
-                print("\n" + "=" * 25)
-                print("      MY PROFILE")
-                print("=" * 25)
+                print("\n" + "=" * 35)
+                print("            MY PROFILE")
+                print("-" * 35)
                 print(f"ID:    {student['student_id']}")
                 print(f"Name:  {student['name']}")
                 print(f"Email: {student['email']}")
                 print(f"Year:  {student['year']}")
                 print(f"GPA:   {student['gpa']}")
-                print("=" * 25 + "\n")
+                print("=" * 35 + "\n")
             else:
                 print("\nError: Profile not found in database.\n")
 

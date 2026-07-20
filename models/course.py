@@ -1,8 +1,24 @@
+import json
+import os
 class Course:
-    def __init__(self, course_id, title, credits):
+    def __init__(self, course_id, course_code, course_name, year_level, active =  True):
         self.course_id = course_id
-        self.title = title
-        self.credits = credits
+        self.course_code = course_code
+        self.course_name = course_name
+        self.year_level = year_level
+        self.active = active
 
     def __repr__(self):
         return f"Course({self.course_id}, {self.title}, {self.credits})"
+    
+    @staticmethod
+    def load_courses():
+        if not os.path.exists("Course.json"):
+            return []
+        with open("Course.json", "r") as f:
+            return json.load(f)
+
+    @staticmethod
+    def save_courses(courses):
+        with open("Course.json", "w") as f:
+            json.dump(courses, f, indent=4)
