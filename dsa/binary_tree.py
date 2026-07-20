@@ -15,7 +15,11 @@ class BinaryTree:
 
         current = self.root
         while True:
-            if key < current.value[0]:
+            
+            if key == current.value[0]:
+                current.value = (key, value)
+                return
+            elif key < current.value[0]:
                 if current.left is None:
                     current.left = Node((key, value))
                     return
