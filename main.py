@@ -1,4 +1,4 @@
-from utils.menu import show_admin_menu, show_main_menu, show_student_menu, login, get_student
+from utils.menu import show_admin_menu, show_main_menu, show_student_menu, login
 import json
 
 def main():
