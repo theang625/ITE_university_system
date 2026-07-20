@@ -2,6 +2,8 @@ from services.admin_service import AdminService
 from data import admins, students
 from models.student import Student
 from dsa.hash_table import HashTable
+from models.admin import Admin
+from models.student import Student
 import json 
 
 admin_service = AdminService()
@@ -12,22 +14,16 @@ def show_main_menu():
     print("3. Exit.")
     
 def login(username, password):
-        for i in range(len(admins)):
-            if admins[i]["username"] == username and admins[i]["password"] == password:
-                print(f"Login successful. Welcome, {admins[i]['username']} (admin ID {i})")
-                show_admin_menu()
-                return bool  # or return i, whatever you need
-        
-        print("Invalid username or password")
-    
-def get_admins() :
-    
-    with open("admins.json", "r") as f:
-        admins = json.load(f)
-        
-    for admin in admins:
-        print(f"Username: {admin['username']}")
-    return show_main_menu()
+    admins = Admin.load_admins()
+
+    for i in range(len(admins)):
+        if admins[i]["username"] == username and admins[i]["password"] == password:
+            print(f"Login successful. Welcome, {admins[i]['username']} (admin ID {i})")
+            show_admin_menu()
+            return admins[i]  # return the matched admin dict, not bool
+
+    print("Invalid username or password")
+    return None
         
 def show_admin_menu():
     
@@ -116,12 +112,33 @@ def show_admin_menu():
             print("Invalid choice")
             
 def show_student_menu():
-    print("=" * 40)
-    print("Welcome to Student Menu")
-    print("=" * 40)
-    print("\n1. View Profile.")
-    print("2. View Regitstered courses.")
     
+    while True:
+        
+        print("=" * 40)
+        print("\tWelcome to Student Menu")
+        print("=" * 40)
+        print("\n1. View Profile.")
+        print("2. View Regitstered courses.")
+        
+        choice = input("Enter your choice for student menu: ")
+        
+        if choice == "1":
+            
+            students = Student.load_students()
+            
+            print("=" * 35)
+            print("Loing your accout first.")
+            student_name = input("Input your name:")
+            for i in range(len(students)):
+                
+                if students[i]["name"] == student_name:
+                    print(f"Welcome, {students[i]['name']}")
+                    return admins[i]  # return the matched admin dict, not bool
+
+            print("Invalid username or password")
+            return None
+
 def get_student():
     print("Student List.")
     print("=" * 35)
