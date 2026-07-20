@@ -1,6 +1,7 @@
 from services.admin_service import AdminService
 from data import admins, students
 from models.student import Student
+from dsa.hash_table import HashTable
 import json 
 
 admin_service = AdminService()
@@ -18,8 +19,6 @@ def login(username, password):
                 return bool  # or return i, whatever you need
         
         print("Invalid username or password")
-
-        return None
     
 def get_admins() :
     
@@ -80,8 +79,8 @@ def show_admin_menu():
                 print("Student updated successfully")
                 
         elif choice == "4":
-            for student in admin_service.view_students():
-                print(student)
+            print(admin_service.view_students())
+            print("=" * 35)
                 
         elif choice == "5":
             student_id = int(input("Enter student ID to search: "))

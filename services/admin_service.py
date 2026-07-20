@@ -10,20 +10,22 @@ import json
 import os
  
 class AdminService:
+    
     def __init__(self):
-        self.admins = []
-        self.hash_table = HashTable()
-        self.courses_tree = BinaryTree()
-        self.enrollment_graph = Graph()
+        self.students_table = HashTable()
+        self._load_table_from_json()
 
-    def add_admin(self, admin_id, name):
-        admin = Admin(admin_id, name)
-        
-        self.admins_table.insertion(admin_id, name)
-        return admin
+    def _load_table_from_json(self):
+        """On startup, read students.json and rebuild the hash table."""
+        students = Student.load_students()
+        for s in students:
+            self.students_table.insertion(s["student_id"], s)
 
     def add_student(self, student_id, name, email, year, gpa):
-        students = Student.load_students()  # no instance needed
+        # Fast duplicate check via hash table
+        if self.students_table.get(student_id) is not None:
+            print(f"Student ID {student_id} already exists.")
+            return None
 
         new_student = {
             "student_id": student_id,
@@ -32,34 +34,38 @@ class AdminService:
             "year": year,
             "gpa": gpa,
         }
-        
-        if any(s["student_id"] == student_id for s in students):
-            print(f"Student ID {student_id} already exists. With name: {name}")
-            return None
-        else:
-            students.append(new_student)
-            Student.save_students(students)
-            print(f"Student '{name}' added successfully.") 
-        
+
+        # Update hash table (memory)
+        self.students_table.insertion(student_id, new_student)
+
+        # Update JSON
+        students = Student.load_students()
+        students.append(new_student)
+        Student.save_students(students)
+
+        print(f"\tStudent '{name}' added successfully.")
         return new_student
 
     def delete_student(self, student_id):
-        students = Student.load_students()
-
-        student_exists = any(s["student_id"] == student_id for s in students)
-        if not student_exists:
+        
+        deleted = self.students_table.delete(student_id)
+        
+        if not deleted:
             print(f"Student ID {student_id} not found.")
             return False
 
+        # Sync deletion to JSON
+        students = Student.load_students()
         students = [s for s in students if s["student_id"] != student_id]
         Student.save_students(students)
-
+        
+        """Working on this please connect to the enrollment table"""
         # clean up this student's enrollment records too
         enrollments = Enrollment.load_enrollments()
         enrollments = [e for e in enrollments if e["student_id"] != student_id]
         Enrollment.save_enrollments(enrollments)
-
-        print(f"Student ID {student_id} deleted successfully.")
+        
+        print(f"Student ID {student_id} deleted.")
         return True
 
     def update_student(self, student_id, name=None, email=None, year=None, gpa=None):
@@ -99,7 +105,11 @@ class AdminService:
         return student
 
     def view_students(self):
-        return Student.load_students()
+        with open("students.json", "r") as f:
+            students = json.load(f)
+        
+        for student in students:
+            print(f"Student: id: {student['student_id']}, name: {student['name']}")
 
     def get_student(self, student_id):
         students = Student.load_students()
