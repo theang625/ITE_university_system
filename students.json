@@ -1,12 +1,5 @@
 [
     {
-        "student_id": 3,
-        "name": "Chan Visal",
-        "email": "chan.visal3@gmail.com",
-        "year": 3,
-        "gpa": 3.91
-    },
-    {
         "student_id": 4,
         "name": "Lim Sophea",
         "email": "lim.sophea4@gmail.com",

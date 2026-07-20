@@ -1,100 +1,84 @@
-import json
 import math
-import os
-from services import admin_service
 
 class HashTable:
-    def __init__(self, size=50):
+    def __init__(self, size = 16):
         self.size = size
-        self.table = [[] for _ in range(size)]
+        self.buckets = [[] for _ in range(self.size)]  # list of lists (chaining)
+        self.count = 0
 
-    # ----------------------------
-    # Hash Function
-    # ----------------------------
     def _hash(self, key):
+        """Convert key into an index within bucket range."""
         A = 0.6180339887
         return math.floor(self.size * ((int(key) * A) % 1))
 
-    # ----------------------------
-    # Insert Student
-    # ----------------------------
-    def insert(self, student):
-        
-        key = student["id"]
+    def insertion(self, key, value):
+        """Insert or update a key-value pair."""
         index = self._hash(key)
-
-        # Update if already exists
-        for item in self.table[index]:
-            if item["id"] == key:
-                item.update(student)
+        bucket = self.buckets[index]
+        
+        # If key already exists, update its value
+        for i, (k, v) in enumerate(bucket):
+            if k == key:
+                bucket[i] = (key, value)
                 return
 
-        self.table[index].append(student)
+        # Otherwise, add new entry
+        bucket.append((key, value))
+        self.count += 1
 
-    # ----------------------------
-    # Search Student
-    # ----------------------------
+        # Resize if load factor gets too high (keeps lookups fast)
+        if self.count / self.size > 0.75:
+            self._resize()
+
     def get(self, key):
+        """Return the value for a key, or None if not found."""
         index = self._hash(key)
+        bucket = self.buckets[index]
 
-        for item in self.table[index]:
-            if item["id"] == key:
-                return item
-
+        for k, v in bucket:
+            if k == key:
+                return v
         return None
 
-    # ----------------------------
-    # Delete Student
-    # ----------------------------
     def delete(self, key):
+        """Remove a key-value pair. Returns True if deleted, False if not found."""
         index = self._hash(key)
+        bucket = self.buckets[index]
 
-        for item in self.table[index]:
-            if item["id"] == key:
-                self.table[index].remove(item)
+        for i, (k, v) in enumerate(bucket):
+            if k == key:
+                del bucket[i]
+                self.count -= 1
                 return True
-
         return False
 
-    # ----------------------------
-    # Update Student
-    # ----------------------------
-    def update(self, key, **kwargs):
-        student = self.get(key)
+    def contains(self, key):
+        """Check if a key exists."""
+        return self.get(key) is not None
 
-        if student:
-            student.update(kwargs)
-            return True
+    def keys(self):
+        """Return all keys stored."""
+        return [k for bucket in self.buckets for k, v in bucket]
 
-        return False
-
-    # ----------------------------
-    # Return all students
-    # ----------------------------
     def values(self):
-        students = []
+        """Return all values stored."""
+        return [v for bucket in self.buckets for k, v in bucket]
 
-        for bucket in self.table:
-            students.extend(bucket)
+    def items(self):
+        """Return all (key, value) pairs."""
+        return [(k, v) for bucket in self.buckets for k, v in bucket]
 
-        return students
+    def _resize(self):
+        """Double the bucket count and reinsert all items (keeps lookups O(1))."""
+        old_items = self.items()
+        self.size *= 2
+        self.buckets = [[] for _ in range(self.size)]
+        self.count = 0
+        for k, v in old_items:
+            self.insertion(k, v)
 
-    # ----------------------------
-    # Load JSON File
-    # ----------------------------
-    def load_json(self, filename):
-        if not os.path.exists(filename):
-            return
+    def __len__(self):
+        return self.count
 
-        with open(filename, "r", encoding="utf-8") as file:
-            data = json.load(file)
-
-        for student in data:
-            self.insert(student)
-
-    # ----------------------------
-    # Save JSON File
-    # ----------------------------
-    def save_json(self, filename):
-        with open(filename, "w", encoding="utf-8") as file:
-            json.dump(self.values(), file, indent=4)
+    def __repr__(self):
+        return f"HashTable({self.items()})"
