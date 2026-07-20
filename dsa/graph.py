@@ -9,7 +9,9 @@ class Graph:
     def add_edge(self, src, dest):
         self.add_vertex(src)
         self.add_vertex(dest)
-        self.graph[src].append(dest)
+        # BUG FIX: Prevent duplicate enrollments!
+        if dest not in self.graph[src]:
+            self.graph[src].append(dest)
 
     def get_neighbors(self, vertex):
         return self.graph.get(vertex, [])
@@ -22,3 +24,20 @@ class Graph:
 
     def vertices(self):
         return list(self.graph.keys())
+
+    # ==========================================
+    # NEW LOGIC: Un-enrollment & Edge Checking
+    # ==========================================
+
+    def has_edge(self, src, dest):
+        """Checks if a student is already enrolled in a specific course."""
+        if src in self.graph:
+            return dest in self.graph[src]
+        return False
+
+    def remove_edge(self, src, dest):
+        """Removes a specific course from a student's enrollment."""
+        if src in self.graph and dest in self.graph[src]:
+            self.graph[src].remove(dest)
+            return True
+        return False

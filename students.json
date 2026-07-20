@@ -124,5 +124,12 @@
         "email": "dd",
         "year": 1,
         "gpa": 1.0
+    },
+    {
+        "student_id": 23,
+        "name": "yaya",
+        "email": "yaya123@gmail.com",
+        "year": 3,
+        "gpa": 4.0
     }
 ]
