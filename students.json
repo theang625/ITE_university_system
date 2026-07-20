@@ -1,5 +1,26 @@
 [
     {
+        "student_id": 1,
+        "name": "Nim Cheysith",
+        "email": "nim.cheysith14@gmail.com",
+        "year": 2,
+        "gpa": 3.45
+    },
+    {
+        "student_id": 2,
+        "name": "Sok Det",
+        "email": "sok.det322@gmail.com",
+        "year": 2,
+        "gpa": 3.44
+    },
+    {
+        "student_id": 3,
+        "name": "Chan Visal",
+        "email": "cha.visal114@gmail.com",
+        "year": 2,
+        "gpa": 3.89
+    },
+    {
         "student_id": 4,
         "name": "Lim Sophea",
         "email": "lim.sophea4@gmail.com",
@@ -120,9 +141,9 @@
     },
     {
         "student_id": 22,
-        "name": "dd",
+        "name": "HelloGuys",
         "email": "dd",
-        "year": 1,
-        "gpa": 1.0
+        "year": 2,
+        "gpa": 3.4
     }
 ]

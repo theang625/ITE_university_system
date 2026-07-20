@@ -120,31 +120,67 @@ def show_student_menu():
         print("=" * 40)
         print("\n1. View Profile.")
         print("2. View Regitstered courses.")
+        print("3. Logout from your account.")
         
         choice = input("Enter your choice for student menu: ")
         
         if choice == "1":
-            
+            users = Student.load_users()
             students = Student.load_students()
-            
+
             print("=" * 35)
-            print("Loing your accout first.")
-            student_name = input("Input your name:")
-            for i in range(len(students)):
-                
-                if students[i]["name"] == student_name:
-                    print(f"Welcome, {students[i]['name']}")
-                    return admins[i]  # return the matched admin dict, not bool
+            print("Login your account first.")
+            student_user = input("Input your username: ")
 
-            print("Invalid username or password")
+            for i in range(len(users)):
+                if users[i]['username'] == student_user:
+                    user_password = input("Input your password: ")
+
+                    if users[i]['password'] == user_password:
+                        print("\tLogin successful.")
+                        print(f"\tWelcome, {users[i]['username']}.")
+
+                        # Find the matching student record by ID
+                        logged_in_user = users[i]
+                        matched_student = None
+
+                        for s in students:
+                            if s['student_id'] == logged_in_user['user_id']:
+                                matched_student = s
+                                break
+
+                        if matched_student:
+                            print("=" * 35)
+                            print("Student Profile")
+                            print("-" * 35)
+                            print(f"ID:    {matched_student['student_id']}")
+                            print(f"Name:  {matched_student['name']}")
+                            print(f"Email: {matched_student['email']}")
+                            print(f"Year:  {matched_student['year']}")
+                            print(f"GPA:   {matched_student['gpa']}")
+                            print("-" * 35)
+                        else:
+                            print("No matching student profile found.")
+
+                        return logged_in_user
+
+                    else:
+                        print("\tInvalid password.")
+                        return None
+
+            print("\tInvalid username.")
             return None
+        
+        elif choice == "2": 
+            pass
+        
+        elif choice == "3":
+            print("Logged out")
+            break
+        
+        else :
+            print("Invalid choice")
 
-def get_student():
-    print("Student List.")
-    print("=" * 35)
-    with open("students.json", "r") as f:
-        students = json.load(f)  # renamed, and loop over this
-    for student in students:
-        print(f"Student: id: {student['id']}, name: {student['name']}")
+
         
     

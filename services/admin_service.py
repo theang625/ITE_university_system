@@ -69,7 +69,7 @@ class AdminService:
         return True
 
     def update_student(self, student_id, name=None, email=None, year=None, gpa=None):
-        students = Student.load_students()
+        students = Student.load_students() 
 
         student = None
         for s in students:
