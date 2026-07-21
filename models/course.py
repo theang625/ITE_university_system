@@ -7,9 +7,6 @@ class Course:
         self.course_name = course_name
         self.year_level = year_level
         self.active = active
-
-    def __repr__(self):
-        return f"Course({self.course_id}, {self.title}, {self.credits})"
     
     @staticmethod
     def load_courses():

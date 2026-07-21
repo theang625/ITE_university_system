@@ -1,7 +1,7 @@
 from services.admin_service import AdminService
-from data import admins, students
 from models.student import Student
 from dsa.hash_table import HashTable
+from models.admin import Admin
 import json
 
 admin_service = AdminService()
@@ -16,6 +16,9 @@ def show_main_menu():
 
 
 def login(username, password):
+    
+    admins = Admin.load_admins()
+    
     for i in range(len(admins)):
         if admins[i]["username"] == username and admins[i]["password"] == password:
             print(f"Login successful. Welcome, {admins[i]['username']} (admin ID {i})")
@@ -73,10 +76,11 @@ def show_admin_menu():
         print("2. Delete Student.")
         print("3. Update Student.")
         print("4. View Students.")
-        print("5. Enter student ID to search.")
+        print("5. Enter student ID or Name to search.")
         print("6. Add Course.")
         print("7. Delete Course.")
-        print("8. Logout.")
+        print("8. View all courses.")
+        print("9. Logout.")
 
         choice = input("Enter your choice for admin menu: ")
 
@@ -115,8 +119,8 @@ def show_admin_menu():
             print(admin_service.view_students())
 
         elif choice == "5":
-            student_id = int(input("Enter student ID to search: "))
-            student = admin_service.get_student(student_id)
+            student_id = int(input("Enter student ID or Name to search: "))
+            student = admin_service.get_student_by_id(student_id)
             if student:
                 print("=" * 35)
                 print(f"ID: {student['student_id']}")
@@ -128,24 +132,30 @@ def show_admin_menu():
                 print(f"Student ID {student_id} not found.")
 
         elif choice == "6":
-            course_id = input("Enter course ID: ")
-            title = input("Enter course title: ")
-            credits = int(input("Enter credits: "))
-            admin_service.add_course(course_id, title, credits)
+            course_id = int(input("Enter course ID: "))
+            course_code = input("Enter course code: ")
+            course_name = input("Enter course name: ")
+            year_level = input("Enter year level: ")
+            active = bool(input("Is the course active? (Leave it blank for active.): "))
+            admin_service.add_course(course_id, course_code, course_name, year_level, active)
             print("Course added successfully")
 
         elif choice == "7":
-            course_id = input("Enter course ID to delete: ")
+            course_id = int(input("Enter course ID to delete: "))
             admin_service.delete_course(course_id)
             print("Course deleted successfully")
-
+            
         elif choice == "8":
+            courses = admin_service._load_courses_from_json()
+            for course in courses:
+                print
+
+        elif choice == "9":
             print("Logged out")
             break
 
         else:
             print("Invalid choice")
-
 
 # Add student_id as a parameter
 def show_student_menu(student_id):

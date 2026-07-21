@@ -12,6 +12,7 @@ class AdminService:
         # 1. Initialize Data Structures
         self.students_table = HashTable()
         self.courses_tree = BinaryTree()
+        
   # Dedicated graph for course prerequisites
 
         # 2. Load Data into Memory on Startup
@@ -148,14 +149,22 @@ class AdminService:
         for student in students:
             print(f"Student ID: {student['student_id']}, Name: {student['name']}")
 
-    def get_student(self, student_id):
+    def get_student_by_id(self, student_id):
         # We can now use the ultra-fast hash table instead of a slow loop!
         return self.students_table.get(student_id)
-
+    
+    def get_student_by_name(self, name):
+        return self.students_table.get(name)
+    
     # ==========================================
     # COURSE & ENROLLMENT OPERATIONS
     # ==========================================
-    def add_course(self, course_id, course_code, course_name, year_level, active =  True):
+    def add_course(self, course_id, course_code, course_name, year_level, active=True):
+        if self.courses_tree.search(course_id) is not None:
+            print(f"Course ID {course_id} already exists.")
+            return None
+        
+        active = True
         
         new_course = {
             "course_id": course_id,
@@ -164,18 +173,43 @@ class AdminService:
             "year_level": year_level,
             "active": active
         }
-        # self.courses_tree.insert(course_id, course)
-        # self.enrollment_graph.add_vertex(course_id)
-        # # Note: You should also append this to couse.json in the future
-        # return course
+
+        # update tree (memory)
+        self.courses_tree.insert(course_id, new_course)
+
+        # update JSON (disk)
+        courses = Course.load_courses()
+        courses.append(new_course)
+        Course.save_courses(courses)
+
+        print(f"Course '{course_name}' added successfully.")
+        return new_course
 
     def delete_course(self, course_id):
-        self.courses_tree.remove(course_id)
-        self.enrollment_graph.remove_vertex(course_id)
+        print(f"Trying to delete: {repr(course_id)}")  # debug line
+        
+        removed = self.courses_tree.remove(course_id)
+        print(f"Tree said removed = {removed}")  # debug line
+
+        if not removed:
+            print(f"Course ID {course_id} not found.")
+            return False
+
+        courses = Course.load_courses()
+        print(f"Courses before: {courses}")  # debug line
+        
+        courses = [c for c in courses if c["course_id"] != course_id]
+        print(f"Courses after: {courses}")  # debug line
+        
+        Course.save_courses(courses)
+        
+        if removed:
+            print(f"Course ID {course_id} deleted successfully.")
         return True
 
     def view_courses(self):
-        return [course for _, course in self.courses_tree.inorder()]
+        self._load_courses_from_json()
+        # return [course for _, course in self.courses_tree.inorder()]
 
     def get_course(self, course_id):
         return self.courses_tree.search(course_id)
