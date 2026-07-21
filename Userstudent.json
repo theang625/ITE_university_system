@@ -18,5 +18,7 @@
   {"user_id": 18, "username": "thorn.s", "password": "changeme123", "role": "student", "linked_student_id": 17},
   {"user_id": 19, "username": "ea.c",    "password": "changeme123", "role": "student", "linked_student_id": 18},
   {"user_id": 20, "username": "long.c",  "password": "changeme123", "role": "student", "linked_student_id": 19},
-  {"user_id": 21, "username": "san.v",   "password": "changeme123", "role": "student", "linked_student_id": 20}
+  {"user_id": 21, "username": "san.v",   "password": "changeme123", "role": "student", "linked_student_id": 20},
+  {"user_id": 22, "username": "dd",      "password": "changeme123", "role": "student", "linked_student_id": 22},
+  {"user_id": 23, "username": "yaya",    "password": "changeme123", "role": "student", "linked_student_id": 23}
 ]
