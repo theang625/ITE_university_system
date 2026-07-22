@@ -20,3 +20,10 @@ class Student:
     def save_students(students):
         with open("students.json", "w") as f:
             json.dump(students, f, indent=4)
+            
+    @staticmethod
+    def load_users():
+        if not os.path.exists("Userstudent.json"):
+            return []
+        with open("Userstudent.json", "r") as f:
+            return json.load(f)
