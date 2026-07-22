@@ -9,7 +9,7 @@ def show_main_menu():
     print("2. Student Menu.")
     print("3. Exit.")
     
-def login(username, password):
+def login(username, password, admins):
         for i in range(len(admins)):
             if admins[i]["username"] == username and admins[i]["password"] == password:
                 print(f"Login successful. Welcome, {admins[i]['username']} (admin ID {i})")
