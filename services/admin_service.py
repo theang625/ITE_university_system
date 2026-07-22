@@ -9,7 +9,6 @@ from dsa.binary_tree import BinaryTree
 from dsa.graph import Graph
 from dsa.stack import Stack
 
-
 class AdminService:
     def __init__(self):
         # 1. Initialize Data Structures
@@ -34,7 +33,7 @@ class AdminService:
 
     def _load_courses_from_json(self):
         """Rebuilds the course Binary Tree from JSON so it's not empty!"""
-        file_path = "course.json"
+        file_path = "Course.json"
         if not os.path.exists(file_path):
             print(f"Warning: Course file not found at {file_path}")
             return

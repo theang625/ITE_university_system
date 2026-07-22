@@ -1,93 +1,43 @@
-"""
-graph.py
-Directed graph logic for course prerequisites.
-Solves: enrollment mistakes (checks eligibility before allowing enrollment).
+class Graph:
+    def __init__(self):
+        self.graph = {}
 
-This module is intentionally "pure" - it doesn't read or write any JSON files
-itself. Whoever calls these functions (admin_service.py / student_service.py)
-is responsible for loading course_require.json and Enrollment.json first,
-then passing the data in.
-"""
+    def add_vertex(self, vertex):
+        if vertex not in self.graph:
+            self.graph[vertex] = []
 
+    def add_edge(self, src, dest):
+        self.add_vertex(src)
+        self.add_vertex(dest)
+        # BUG FIX: Prevent duplicate enrollments!
+        if dest not in self.graph[src]:
+            self.graph[src].append(dest)
 
-def build_graph(course_require):
-    """
-    Build an adjacency structure from the course_require data.
+    def get_neighbors(self, vertex):
+        return self.graph.get(vertex, [])
 
-    course_require: list of dicts like
-        {"course_id": 2, "requires_course_id": 1}
+    def remove_vertex(self, vertex):
+        if vertex in self.graph:
+            del self.graph[vertex]
+        for key in self.graph:
+            self.graph[key] = [neighbor for neighbor in self.graph[key] if neighbor != vertex]
 
-    Returns: dict like
-        {2: [1], 4: [3], 5: [2], 6: [5], 7: [6], 8: [7]}
-    Meaning: graph[course_id] = list of courses it directly requires.
-    """
-    graph = {}
-    for row in course_require:
-        course_id = row["course_id"]
-        requires_id = row["requires_course_id"]
-        graph.setdefault(course_id, []).append(requires_id)
-    return graph
+    def vertices(self):
+        return list(self.graph.keys())
 
+    # ==========================================
+    # NEW LOGIC: Un-enrollment & Edge Checking
+    # ==========================================
 
-def get_direct_requirements(graph, course_id):
-    """
-    Return only the immediate prerequisite(s) for a course - one step back.
+    def has_edge(self, src, dest):
+        """Checks if a student is already enrolled in a specific course."""
+        if src in self.graph:
+            return dest in self.graph[src]
+        return False
 
-    Example: get_direct_requirements(graph, 8) -> [7]   (APL-402 needs APL-401)
-    """
-    return graph.get(course_id, [])
-
-
-def get_full_chain(graph, course_id):
-    """
-    Return the FULL chain of prerequisites needed to reach a course,
-    ordered from earliest to latest (does not include course_id itself).
-
-    Uses DFS, walking backward through the graph.
-
-    Example: get_full_chain(graph, 8)
-        -> [1, 2, 5, 6, 7]
-        meaning: DS-101, DS-102, DB-301, DB-302, APL-401
-        (the entire path needed before APL-402)
-    """
-    chain = []
-    visited = set()
-
-    def dfs(current_id):
-        for required_id in get_direct_requirements(graph, current_id):
-            if required_id not in visited:
-                visited.add(required_id)
-                dfs(required_id)
-                chain.append(required_id)
-
-    dfs(course_id)
-    return chain
-
-
-def can_enroll(graph, completed_course_ids, course_id):
-    """
-    Check if a student can enroll in a course, based on DIRECT requirements
-    only (not the full chain - if a student completed a course, they must
-    have already satisfied everything behind it at the time they took it).
-
-    completed_course_ids: a set/list of course_ids the student has finished
-                           (grade is not None in Enrollment.json)
-
-    Returns: {"eligible": True/False, "missing_courses": [...]}
-    """
-    required = get_direct_requirements(graph, course_id)
-    missing = [c for c in required if c not in completed_course_ids]
-    return {
-        "eligible": len(missing) == 0,
-        "missing_courses": missing,
-    }
-
-
-def add_requirement(graph, course_id, requires_course_id):
-    """
-    Add a new prerequisite edge to the in-memory graph (used when an admin
-    adds a new course_require rule). The caller is still responsible for
-    also appending this to course_require.json so it persists.
-    """
-    graph.setdefault(course_id, []).append(requires_course_id)
-    return graph
+    def remove_edge(self, src, dest):
+        """Removes a specific course from a student's enrollment."""
+        if src in self.graph and dest in self.graph[src]:
+            self.graph[src].remove(dest)
+            return True
+        return False
