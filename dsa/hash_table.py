@@ -1,65 +1,84 @@
+"""
+hash_table.py
+Hash Table logic for fast student lookup by student_id.
+Solves: slow searching student info by id.
+
+Uses multiplicative hashing with chaining (list of buckets, each bucket is
+a list of student dicts that hashed to the same index).
+"""
+
 import math
-import json
-from models.student import Student
+
 
 class HashTable:
     def __init__(self, size=10):
         self.size = size
         self.table = [[] for _ in range(size)]
 
-    def multiplication_hash(self, phone):
-        # M is the size of the hash table
-        M = self.size 
-        
-        # A is a constant (The Golden Ratio conjugate is a common choice)
-        A = 0.618033 
-    
-        # Take the floor of the result to get an integer index
-        hash_value = math.floor(M * ((phone * A) % 1))
-        
-        return hash_value
+    def multiplication_hash(self, student_id):
+        """Multiplicative hashing: maps student_id to a bucket index 0..size-1."""
+        M = self.size
+        A = 0.618033  # golden ratio conjugate - common choice for this method
+        return math.floor(M * ((student_id * A) % 1))
 
-    def student_insert(self, user_id, name, email, gpa):
-        
-        # Get the index for this phone number
-        index = self.multiplication_hash(user_id)
-        
-        # Check if the phone number already exists in this bucket
-        for imformation in self.table[index]:
-            if imformation["name"] == name:
-                print("User already exists!")
-                return
-                
-        # Create a new contact dictionary
-        imformation = {
-            "user_id" : id,
+    def insert(self, student_id, name, email, year, gpa):
+        """Insert a new student. Rejects duplicates by student_id (not name -
+        two students CAN share a name, they can't share a student_id)."""
+        index = self.multiplication_hash(student_id)
+
+        for info in self.table[index]:
+            if info["student_id"] == student_id:
+                print("Student already exists!")
+                return None
+
+        info = {
+            "student_id": student_id,
             "name": name,
-            "phone": email,
-            "gpa" : gpa
+            "email": email,
+            "year": year,
+            "gpa": gpa,
         }
-                
-        # Add the contact to the bucket (Chaining)
-        self.table[index].append(imformation)
-        print(f"Insertion: [{user_id}, {name} -> {email}]")
 
-    def get(self, key):
-        index = self._hash(key)
-        for item in self.table[index]:
-            if item[0] == key:
-                return item[1]
+    def find(self, student_id):
+        """O(1)-ish lookup by student_id. Returns the student dict or None."""
+        index = self.multiplication_hash(student_id)
+        for info in self.table[index]:
+            if info["student_id"] == student_id:
+                return info
         return None
 
-    def delete(self, key):
-        index = self._hash(key)
-        for item in self.table[index]:
-            if item[0] == key:
-                self.table[index].remove(item)
+    def delete(self, student_id):
+        """Remove a student entry. Returns True if deleted, False if not found."""
+        index = self.multiplication_hash(student_id)
+        for info in self.table[index]:
+            if info["student_id"] == student_id:
+                self.table[index].remove(info)
                 return True
         return False
 
+    def update(self, student_id, name=None, email=None, year=None, gpa=None):
+        """Update fields on an existing student. Returns the updated dict or None."""
+        student = self.find(student_id)
+        if student is None:
+            return None
+        if name is not None:
+            student["name"] = name
+        if email is not None:
+            student["email"] = email
+        if year is not None:
+            student["year"] = year
+        if gpa is not None:
+            student["gpa"] = gpa
+        return student
+
+    def exists(self, student_id):
+        """Check if a student_id is already in the table."""
+        return self.find(student_id) is not None
+
     def values(self):
-        values = []
+        """Return all students currently in the table, as a flat list."""
+        result = []
         for bucket in self.table:
-            for _, value in bucket:
-                values.append(value)
-        return values
+            for info in bucket:
+                result.append(info)
+        return result
