@@ -152,6 +152,10 @@ class AdminService:
     def get_student(self, student_id):
         return self.students_table.get(student_id)
     
+    def get_student_by_id(self, student_id):
+        """Alias for get_student for consistency."""
+        return self.students_table.get(student_id)
+    
     def get_student_by_name(self, name):
         return self.students_table.get(name)
     

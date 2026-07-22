@@ -1,12 +1,10 @@
 import json
 import os
 class Course:
-    def __init__(self, course_id, course_code, course_name, year_level, active =  True):
+    def __init__(self, course_id, title, credits):
         self.course_id = course_id
-        self.course_code = course_code
-        self.course_name = course_name
-        self.year_level = year_level
-        self.active = active
+        self.title = title
+        self.credits = credits
     
     @staticmethod
     def load_courses():
