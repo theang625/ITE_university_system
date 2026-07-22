@@ -6,11 +6,6 @@ from models.student import Student
 from models.enrollment import Enrollment
 from dsa.hash_table import HashTable
 from dsa.binary_tree import BinaryTree
-
-from models.student import Student
-from models.enrollment import Enrollment
-import json
-import os
  
 class AdminService:
     def __init__(self):
