@@ -6,27 +6,22 @@ from models.student import Student
 from models.enrollment import Enrollment
 from dsa.hash_table import HashTable
 from dsa.binary_tree import BinaryTree
-<<<<<<< HEAD
 
-=======
 from models.student import Student
 from models.enrollment import Enrollment
 import json
 import os
  
->>>>>>> origin/ayuthaya
 class AdminService:
     def __init__(self):
         # 1. Initialize Data Structures
         self.students_table = HashTable()
         self.courses_tree = BinaryTree()
-<<<<<<< HEAD
-=======
 
 
     def add_admin(self, admin_id, name):
         admin = Admin(admin_id, name)
->>>>>>> origin/ayuthaya
+
         
   # Dedicated graph for course prerequisites
 
@@ -200,7 +195,6 @@ class AdminService:
         print(f"Course '{course_name}' added successfully.")
         return new_course
 
-<<<<<<< HEAD
     def delete_course(self, course_id):
         print(f"Trying to delete: {repr(course_id)}")  # debug line
         
@@ -223,8 +217,6 @@ class AdminService:
             print(f"Course ID {course_id} deleted successfully.")
         return True
 
-=======
->>>>>>> origin/ayuthaya
     def view_courses(self):
         self._load_courses_from_json()
         # return [course for _, course in self.courses_tree.inorder()]

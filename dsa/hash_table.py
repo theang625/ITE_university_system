@@ -1,6 +1,4 @@
-<<<<<<< HEAD
 import math
-=======
 
 import json
 import math
@@ -16,8 +14,6 @@ a list of student dicts that hashed to the same index).
 """
 
 import math
->>>>>>> origin/ayuthaya
-
 class HashTable:
     def __init__(self, size = 20):
         self.size = size
@@ -63,12 +59,11 @@ class HashTable:
         index = self._hash(key)
         bucket = self.buckets[index]
 
-<<<<<<< HEAD
         for i, (k, v) in enumerate(bucket):
             if k == key:
                 del bucket[i]
                 self.count -= 1
-=======
+                
         for item in self.table[index]:
             if item["id"] == key:
                 self.table[index].remove(item)
@@ -110,7 +105,6 @@ class HashTable:
         for info in self.table[index]:
             if info["student_id"] == student_id:
                 self.table[index].remove(info)
->>>>>>> origin/ayuthaya
                 return True
         return False
 
@@ -142,10 +136,9 @@ class HashTable:
     def __len__(self):
         return self.count
 
-<<<<<<< HEAD
     def __repr__(self):
         return f"HashTable({self.items()})"
-=======
+    
         with open(filename, "r", encoding="utf-8") as file:
             data = json.load(file)
 
@@ -185,4 +178,3 @@ class HashTable:
             for info in bucket:
                 result.append(info)
         return result
->>>>>>> origin/ayuthaya
