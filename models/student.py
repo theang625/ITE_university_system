@@ -20,3 +20,4 @@ class Student:
     def save_students(students):
         with open("students.json", "w") as f:
             json.dump(students, f, indent=4)
+            

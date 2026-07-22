@@ -1,7 +1,7 @@
 import math
 
 class HashTable:
-    def __init__(self, size = 16):
+    def __init__(self, size = 20):
         self.size = size
         self.buckets = [[] for _ in range(self.size)]  # list of lists (chaining)
         self.count = 0

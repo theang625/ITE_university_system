@@ -1,10 +1,58 @@
 [
-  {"course_id": 1, "course_code": "DS-101", "course_name": "DATA STRUCTURE I", "year_level": 1},
-  {"course_id": 2, "course_code": "DS-102", "course_name": "DATA STRUCTURE II", "year_level": 1},
-  {"course_id": 3, "course_code": "WTC-201", "course_name": "WTC I", "year_level": 2},
-  {"course_id": 4, "course_code": "WTC-202", "course_name": "WTC II", "year_level": 2},
-  {"course_id": 5, "course_code": "DB-301", "course_name": "Database I", "year_level": 3},
-  {"course_id": 6, "course_code": "DB-302", "course_name": "Database II", "year_level": 3},
-  {"course_id": 7, "course_code": "APL-401", "course_name": "APL I", "year_level": 4},
-  {"course_id": 8, "course_code": "APL-402", "course_name": "APL II", "year_level": 4}
+    {
+        "course_id": 1,
+        "course_code": "DS-101",
+        "course_name": "DATA STRUCTURE I",
+        "year_level": 1,
+        "active": true
+    },
+    {
+        "course_id": 2,
+        "course_code": "DS-102",
+        "course_name": "DATA STRUCTURE II",
+        "year_level": 1,
+        "active": true
+    },
+    {
+        "course_id": 3,
+        "course_code": "WTC-201",
+        "course_name": "WTC I",
+        "year_level": 2,
+        "active": true
+    },
+    {
+        "course_id": 4,
+        "course_code": "WTC-202",
+        "course_name": "WTC II",
+        "year_level": 2,
+        "active": true
+    },
+    {
+        "course_id": 5,
+        "course_code": "DB-301",
+        "course_name": "Database I",
+        "year_level": 3,
+        "active": true
+    },
+    {
+        "course_id": 6,
+        "course_code": "DB-302",
+        "course_name": "Database II",
+        "year_level": 3,
+        "active": true
+    },
+    {
+        "course_id": 7,
+        "course_code": "APL-401",
+        "course_name": "APL I",
+        "year_level": 4,
+        "active": true
+    },
+    {
+        "course_id": 8,
+        "course_code": "APL-402",
+        "course_name": "APL II",
+        "year_level": 4,
+        "active": true
+    }
 ]

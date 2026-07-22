@@ -4,21 +4,21 @@
         "name": "Nim Cheyseth",
         "email": "nim.c@gmail.com",
         "year": 2,
-        "gpa": 3.80
+        "gpa": 3.8
     },
     {
         "student_id": 2,
         "name": "Sok Dara",
         "email": "sok.dara@gmail.com",
         "year": 2,
-        "gpa": 3.50
+        "gpa": 3.5
     },
     {
         "student_id": 3,
         "name": "Chan Vuthy",
         "email": "chan.vuthy@gmail.com",
         "year": 2,
-        "gpa": 3.20
+        "gpa": 3.2
     },
     {
         "student_id": 4,
@@ -47,13 +47,6 @@
         "email": "srey.pov7@gmail.com",
         "year": 1,
         "gpa": 3.88
-    },
-    {
-        "student_id": 8,
-        "name": "Ouk Veasna",
-        "email": "ouk.veasna8@gmail.com",
-        "year": 1,
-        "gpa": 3.2
     },
     {
         "student_id": 9,

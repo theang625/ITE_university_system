@@ -35,13 +35,6 @@
         "enrolled_date": "2026-01-12"
     },
     {
-        "enrollment_id": 8,
-        "student_id": 8,
-        "course_id": 1,
-        "grade": null,
-        "enrolled_date": "2026-01-12"
-    },
-    {
         "enrollment_id": 9,
         "student_id": 9,
         "course_id": 7,

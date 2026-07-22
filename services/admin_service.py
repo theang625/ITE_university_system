@@ -25,6 +25,7 @@ class AdminService:
         self._load_table_from_json()
         self._load_courses_from_json()
         self._load_prereqs_from_json()
+        self._load_enrollments_from_json()  # 🔄 Load graph enrollments on startup
 
     def _load_table_from_json(self):
         """Rebuilds the student hash table from JSON on startup."""
@@ -34,7 +35,7 @@ class AdminService:
 
     def _load_courses_from_json(self):
         """Rebuilds the course Binary Tree from JSON so it's not empty!"""
-        file_path = "course.json"
+        file_path = "Course.json"
         if not os.path.exists(file_path):
             print(f"Warning: Course file not found at {file_path}")
             return
@@ -67,6 +68,57 @@ class AdminService:
             prerequisite = req.get("requires_course_id")
             if course and prerequisite:
                 self.prereq_graph.add_edge(prerequisite, course)
+
+    # 🔄 មុខងារទាញយកទិន្នន័យ Enrollment ពេលបើកកម្មវិធី (Graph Persistence Load)
+    def _load_enrollments_from_json(self):
+        """Loads enrollments from Enrollment.json into the graph on startup."""
+        file_path = "Enrollment.json"
+        if not os.path.exists(file_path):
+            return
+
+        with open(file_path, "r", encoding="utf-8") as f:
+            try:
+                data = json.load(f)
+                for item in data:
+                    s_id = item.get("student_id")
+                    c_id = item.get("course_id")
+                    if s_id and c_id:
+                        self.enrollment_graph.add_edge(s_id, c_id)
+            except Exception as e:
+                print(f"Error loading enrollments: {e}")
+
+    def save_enrollments_to_json(self):
+        """Saves current graph enrollments to Enrollment.json safely without crashing."""
+        file_path = "Enrollment.json"
+        all_enrollments = []
+
+        try:
+            vertices = []
+            # ឆែកមើល Method ផ្សេងៗដែល Graph អាចមានដើម្បីទយក Vertices
+            if hasattr(self.enrollment_graph, 'get_vertices') and callable(self.enrollment_graph.get_vertices):
+                vertices = self.enrollment_graph.get_vertices()
+            elif hasattr(self.enrollment_graph, 'vertices'):
+                v_attr = self.enrollment_graph.vertices
+                vertices = v_attr.keys() if callable(getattr(v_attr, 'keys', None)) else v_attr
+            elif hasattr(self.enrollment_graph, 'adjacency_list'):
+                adj = self.enrollment_graph.adjacency_list
+                vertices = adj.keys() if not callable(adj) else adj().keys()
+
+            for student_id in vertices:
+                courses = self.enrollment_graph.get_neighbors(student_id)
+                for c_id in courses:
+                    all_enrollments.append({
+                        "student_id": student_id,
+                        "course_id": c_id
+                    })
+        except Exception as e:
+            # គ្នារឿងភ័យព្រួយ ប្រសិនបើកន្លែងនេះទាញមិនចេញ គឺយើងអាន File ចាស់មកទុកសិនដើម្បីកុំឱ្យបាត់ទិន្នន័យ
+            if os.path.exists(file_path):
+                with open(file_path, "r", encoding="utf-8") as f:
+                    all_enrollments = json.load(f)
+
+        with open(file_path, "w", encoding="utf-8") as f:
+            json.dump(all_enrollments, f, indent=4)
 
     # ==========================================
     # STUDENT OPERATIONS
@@ -109,6 +161,7 @@ class AdminService:
         Enrollment.save_enrollments(enrollments)
 
         self.enrollment_graph.remove_vertex(student_id)
+        self.save_enrollments_to_json()  # Save graph changes
 
         print(f"Student ID {student_id} deleted and enrollments cleared.")
         return True
@@ -153,6 +206,28 @@ class AdminService:
     def get_student(self, student_id):
         return self.students_table.get(student_id)
 
+    def get_student_by_id(self, student_id):
+        """Alias for get_student for consistency."""
+        return self.students_table.get(student_id)
+
+    # 🚀 មុខងារស្វែងរកសិស្សតាមឈ្មោះ (Search by Name)
+    def search_students_by_name(self, name_query):
+        """Searches for students whose names contain the given query string (case-insensitive)."""
+        file_path = "students.json"
+        matching_students = []
+
+        if os.path.exists(file_path):
+            try:
+                with open(file_path, "r", encoding="utf-8") as f:
+                    students_data = json.load(f)
+                    for s in students_data:
+                        if name_query.lower() in s.get("name", "").lower():
+                            matching_students.append(s)
+            except Exception as e:
+                print(f"Error reading students file: {e}")
+
+        return matching_students
+
     # ==========================================
     # COURSE & ENROLLMENT OPERATIONS
     # ==========================================
@@ -163,21 +238,38 @@ class AdminService:
         return course
 
     def delete_course(self, course_id):
-        self.courses_tree.remove(course_id)
-        self.enrollment_graph.remove_vertex(course_id)
+        print(f"Trying to delete: {repr(course_id)}")  # debug line
+
+        removed = self.courses_tree.remove(course_id)
+        print(f"Tree said removed = {removed}")  # debug line
+
+        if not removed:
+            print(f"Course ID {course_id} not found.")
+            return False
+
+        courses = Course.load_courses()
+        print(f"Courses before: {courses}")  # debug line
+
+        courses = [c for c in courses if c["course_id"] != course_id]
+        print(f"Courses after: {courses}")  # debug line
+
+        Course.save_courses(courses)
+
+        if removed:
+            print(f"Course ID {course_id} deleted successfully.")
         return True
 
     def view_courses(self):
+        """Returns all courses by traversing the binary tree in-order."""
+        self._load_courses_from_json()
         return [course for _, course in self.courses_tree.inorder()]
 
     def get_course(self, course_id):
         """Safely searches for a course in the binary tree by handling type matching."""
-        # ព្យាយាមស្វែងរកដោយផ្ទាល់មុនសិន
         result = self.courses_tree.search(course_id)
         if result:
             return result
 
-        # បើរកមិនឃើញ សូមព្យាយាមប្តូរ Type វារវាង String និង Int ដើម្បីការពារ Error
         try:
             if isinstance(course_id, str):
                 alt_id = int(course_id)
@@ -187,8 +279,29 @@ class AdminService:
         except (ValueError, TypeError):
             return None
 
+    # 🛡️ មុខងារឆែកមុខវិជ្ជាត្រួតពិនិត្យមុន (Prerequisite Validation)
+    def check_prerequisites(self, student_id, course_id):
+        """Checks if a student has completed the prerequisites for a course."""
+        required_courses = self.prereq_graph.get_neighbors(course_id)
+        if not required_courses:
+            return True  # អត់មានទាមទារមុខវិជ្ជាមុនទេ
+
+        enrolled_courses = self.enrollment_graph.get_neighbors(student_id)
+
+        for req in required_courses:
+            if req not in enrolled_courses:
+                print(
+                    f"⚠️ Prerequisite Error: Course {course_id} requires prerequisite [{req}], which the student has not completed yet.")
+                return False
+        return True
+
     def enroll_student(self, student_id, course_id):
+        # ឆែក Prerequisites មុននឹងអនុញ្ញាតឱ្យ Enroll
+        if not self.check_prerequisites(student_id, course_id):
+            return False
+
         self.enrollment_graph.add_edge(student_id, course_id)
+        self.save_enrollments_to_json()  # 💾 Save ចូល file ស្វ័យប្រវត្តិ
         return True
 
     # ==========================================
@@ -197,15 +310,14 @@ class AdminService:
     def admin_drop_course(self, student_id, course_id):
         """Admin removes a course, but we save it in case of a mistake."""
         if self.enrollment_graph.remove_edge(student_id, course_id):
-            # Pack the action details into a dictionary
             action_log = {
                 "type": "drop_course",
                 "student_id": student_id,
                 "course_id": course_id
             }
 
-            # Push it to the history stack
             self.undo_stack.push(action_log)
+            self.save_enrollments_to_json()  # 💾 Save ចូល file ស្វ័យប្រវត្តិក្រោយពេល Drop
             print(f"Success: Dropped {course_id} for {student_id}.")
             return True
 
