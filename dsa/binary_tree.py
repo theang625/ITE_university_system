@@ -69,7 +69,7 @@ class BinaryTree:
             node.right = self._remove(node.right, min_node.value[0])
         return node
 
-    def _find_min(self, node):
+    def _find_min(self, node): #tree clean
         current = node
         while current.left is not None:
             current = current.left
