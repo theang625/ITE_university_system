@@ -1,9 +1,8 @@
-<<<<<<< HEAD
+
 import json
 import math
 import os
 from services import admin_service
-=======
 """
 hash_table.py
 Hash Table logic for fast student lookup by student_id.
@@ -15,14 +14,11 @@ a list of student dicts that hashed to the same index).
 
 import math
 
->>>>>>> 40d177210b61bb68af54c00158dc7c9c5eb1678d
-
 class HashTable:
     def __init__(self, size=50):
         self.size = size
         self.table = [[] for _ in range(size)]
 
-<<<<<<< HEAD
     # ----------------------------
     # Hash Function
     # ----------------------------
@@ -67,7 +63,6 @@ class HashTable:
         for item in self.table[index]:
             if item["id"] == key:
                 self.table[index].remove(item)
-=======
     def multiplication_hash(self, student_id):
         """Multiplicative hashing: maps student_id to a bucket index 0..size-1."""
         M = self.size
@@ -106,12 +101,10 @@ class HashTable:
         for info in self.table[index]:
             if info["student_id"] == student_id:
                 self.table[index].remove(info)
->>>>>>> 40d177210b61bb68af54c00158dc7c9c5eb1678d
                 return True
 
         return False
 
-<<<<<<< HEAD
     # ----------------------------
     # Update Student
     # ----------------------------
@@ -154,7 +147,7 @@ class HashTable:
     def save_json(self, filename):
         with open(filename, "w", encoding="utf-8") as file:
             json.dump(self.values(), file, indent=4)
-=======
+
     def update(self, student_id, name=None, email=None, year=None, gpa=None):
         """Update fields on an existing student. Returns the updated dict or None."""
         student = self.find(student_id)
@@ -181,4 +174,3 @@ class HashTable:
             for info in bucket:
                 result.append(info)
         return result
->>>>>>> 40d177210b61bb68af54c00158dc7c9c5eb1678d

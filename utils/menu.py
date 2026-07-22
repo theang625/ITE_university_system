@@ -1,5 +1,4 @@
 from services.admin_service import AdminService
-from data import admins, students
 from models.student import Student
 import json 
 
