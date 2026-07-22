@@ -6,6 +6,7 @@ import json
 
 admin_service = AdminService()
 
+
 def show_main_menu():
     print("MAIN MENU".center(45))
     print("=" * 45)
@@ -16,9 +17,8 @@ def show_main_menu():
 
 
 def login(username, password):
-    
     admins = Admin.load_admins()
-    
+
     for i in range(len(admins)):
         if admins[i]["username"] == username and admins[i]["password"] == password:
             print(f"Login successful. Welcome, {admins[i]['username']} (admin ID {i})")
@@ -30,7 +30,6 @@ def login(username, password):
 
 
 def student_login(username, password):
-
     try:
         with open("Userstudent.json", "r") as f:
             users = json.load(f)
@@ -38,10 +37,8 @@ def student_login(username, password):
         for user in users:
             if user.get("username") == username and user.get("password") == password:
                 print(f"\nLogin successful! Welcome, {username}.")
-
                 linked_id = user.get("linked_student_id")
                 show_student_menu(linked_id)
-
                 return True
 
         print("\nInvalid username or password. Please try again.")
@@ -62,7 +59,6 @@ def get_admins():
 
 
 def show_admin_menu():
-    
     while True:
         print("=" * 35)
         print(" " * 4, end=" ")
@@ -74,12 +70,13 @@ def show_admin_menu():
         print("3. Update Student")
         print("4. View Students")
         print("5. Enter student ID to search")
+        print("5.2. Enter student Name to search")  # មុខងារស្វែងរកតាមឈ្មោះថ្មីយ៉ាងអេម
         print("6. Add Course")
         print("7. Delete Course")
         print("8. Logout")
         print("9. Undo Last Action")
         print("10. Drop Course for Student (Un-enroll)")
-        print("11. Enroll Student in Multiple Courses ")  # ធ្វើបច្ចុប្បន្នភាពមុខងារថ្មី
+        print("11. Enroll Student in Multiple Courses")
 
         choice = input("Enter your choice for admin menu: ")
 
@@ -118,8 +115,9 @@ def show_admin_menu():
             print(admin_service.view_students())
 
         elif choice == "5":
-            student_id = int(input("Enter student ID or Name to search: "))
-            student = admin_service.get_student_by_id(student_id)
+            student_id = int(input("Enter student ID to search: "))
+            student = admin_service.get_student(student_id)
+
             if student:
                 print("=" * 35)
                 print(f"ID: {student['student_id']}")
@@ -127,8 +125,33 @@ def show_admin_menu():
                 print(f"Email: {student['email']}")
                 print(f"Year: {student['year']}")
                 print(f"GPA: {student['gpa']}")
+                print("=" * 35)
             else:
                 print(f"Student ID {student_id} not found.")
+
+        elif choice == "5.2":
+            print("\n" + "=" * 40)
+            print("       SEARCH STUDENT BY NAME")
+            print("=" * 40)
+            name_query = input("Enter student name : ").strip()
+
+            if not name_query:
+                print("Please enter a valid name to search.")
+            else:
+                results = admin_service.search_students_by_name(name_query)
+                if not results:
+                    print(f" No students found matching '{name_query}'.")
+                else:
+                    print(f"\nFound {len(results)} student(s):")
+                    print("=" * 45)
+                    for s in results:
+                        print(f"ID:    {s.get('student_id', s.get('id'))}")
+                        print(f"Name:  {s.get('name')}")
+                        print(f"Email: {s.get('email')}")
+                        print(f"Year:  {s.get('year')}")
+                        print(f"GPA:   {s.get('gpa')}")
+                        print("-" * 45)
+            print("=" * 40 + "\n")
 
         elif choice == "6":
             course_id = input("Enter course ID: ")
@@ -169,17 +192,13 @@ def show_admin_menu():
             print("\n--- Un-enroll Student ---")
             student_id = int(input("Enter Student ID: "))
             course_id = input("Enter Course ID to drop: ")
-
             admin_service.admin_drop_course(student_id, course_id)
 
-        # 🚀 មុខងារថ្មី៖ Admin អាច Enroll មុខវិជ្ជាច្រើនព្រមគ្នាដោយខ័ណ្ឌដោយសញ្ញាក្បៀស (,)
         elif choice == "11":
             print("\n--- Enroll Student in Multiple Courses ---")
             try:
                 student_id = int(input("Enter Student ID: "))
                 courses_input = input("Enter Course IDs separated by commas (e.g., CS101, MATH201, ENG301): ")
-
-                # បំបែក Course IDs តាមសញ្ញាក្បៀស និងលុបចន្លោះទទេរ (Whitespace)
                 course_ids = [c.strip() for c in courses_input.split(",") if c.strip()]
 
                 if not course_ids:
@@ -187,9 +206,8 @@ def show_admin_menu():
                 else:
                     success_count = 0
                     for c_id in course_ids:
-                        # ធ្វើការ Enroll ចូល Graph ម្តងមួយៗ
-                        admin_service.enroll_student(student_id, c_id)
-                        success_count += 1
+                        if admin_service.enroll_student(student_id, c_id):
+                            success_count += 1
 
                     print(
                         f"SUCCESS: Enrolled Student ID {student_id} into {success_count} course(s): {', '.join(course_ids)}")
@@ -202,16 +220,10 @@ def show_admin_menu():
 
 def show_student_menu(student_id):
     while True:
-        print("\n" + "-" * 45)
-        print(" " * 14 + "STUDENT MENU")
-        print("-" * 45)
-        print("\n1. View Profile.")
-        print("2. View Registered courses.")
-        print("3. Go back to Main Menu.")
-        print("=" * 40)
+        print("\n" + "=" * 40)
         print("Welcome to Student Menu")
         print("=" * 40)
-        print("\n1. View Profile & My Courses.")
+        print("1. View Profile & My Courses.")
         print("2. Go back to Main Menu.")
 
         choice = input("Enter your choice for student menu: ")
@@ -221,7 +233,7 @@ def show_student_menu(student_id):
 
             if student:
                 print("\n" + "=" * 50)
-                print("      🎓 MY PROFILE & COURSES")
+                print("       MY PROFILE & COURSES")
                 print("=" * 50)
                 print(f"ID:    {student['student_id']}")
                 print(f"Name:  {student['name']}")
@@ -229,7 +241,7 @@ def show_student_menu(student_id):
                 print(f"Year:  {student['year']}")
                 print(f"GPA:   {student['gpa']}")
                 print("-" * 50)
-                print("📚 Enrolled Courses:")
+                print(" Enrolled Courses:")
 
                 enrolled_course_ids = admin_service.enrollment_graph.get_neighbors(student_id)
 
@@ -244,7 +256,6 @@ def show_student_menu(student_id):
 
                         course = admin_service.get_course(formatted_course_id)
                         if course:
-                            # បង្ហាញជា Course Code យ៉ាងស្អាត
                             print(f"   - Course Code: {course.course_id} | {course.title}")
                         else:
                             print(f"   - Course Code: {course_id} (Details missing)")

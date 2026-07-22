@@ -1,156 +1,149 @@
 [
-  {
-    "student_id": 1,
-    "name": "Nim Cheyseth",
-    "email": "nim.c@gmail.com",
-    "year": 2,
-    "gpa": 3.8
-  },
-  {
-    "student_id": 2,
-    "name": "Sok Dara",
-    "email": "sok.dara@gmail.com",
-    "year": 2,
-    "gpa": 3.5
-  },
-  {
-    "student_id": 3,
-    "name": "Chan Vuthy",
-    "email": "chan.vuthy@gmail.com",
-    "year": 2,
-    "gpa": 3.2
-  },
-  {
-    "student_id": 4,
-    "name": "Lim Sophea",
-    "email": "lim.sophea4@gmail.com",
-    "year": 2,
-    "gpa": 3.45
-  },
-  {
-    "student_id": 5,
-    "name": "Kong Malea",
-    "email": "kong.malea5@gmail.com",
-    "year": 2,
-    "gpa": 3.75
-  },
-  {
-    "student_id": 6,
-    "name": "Heng Vuthy",
-    "email": "heng.vuthy6@gmail.com",
-    "year": 2,
-    "gpa": 3.6
-  },
-  {
-    "student_id": 7,
-    "name": "Srey Pov",
-    "email": "srey.pov7@gmail.com",
-    "year": 1,
-    "gpa": 3.88
-  },
-  {
-    "student_id": 8,
-    "name": "Ouk Veasna",
-    "email": "ouk.veasna8@gmail.com",
-    "year": 1,
-    "gpa": 3.2
-  },
-  {
-    "student_id": 9,
-    "name": "Pov Chantra",
-    "email": "pov.chantra9@gmail.com",
-    "year": 4,
-    "gpa": 3.95
-  },
-  {
-    "student_id": 10,
-    "name": "Chhun Samnang",
-    "email": "chhun.samnang10@gmail.com",
-    "year": 1,
-    "gpa": 3.55
-  },
-  {
-    "student_id": 11,
-    "name": "Lim Sreypech",
-    "email": "lim.sreypech11@gmail.com",
-    "year": 1,
-    "gpa": 3.7
-  },
-  {
-    "student_id": 12,
-    "name": "Chea Vannak",
-    "email": "chea.vannak12@gmail.com",
-    "year": 1,
-    "gpa": 3.4
-  },
-  {
-    "student_id": 13,
-    "name": "Mao Sovanna",
-    "email": "mao.sovanna13@gmail.com",
-    "year": 2,
-    "gpa": 3.85
-  },
-  {
-    "student_id": 14,
-    "name": "Huot Rasmey",
-    "email": "huot.rasmey14@gmail.com",
-    "year": 2,
-    "gpa": 3.15
-  },
-  {
-    "student_id": 15,
-    "name": "Keo Mony",
-    "email": "keo.mony15@gmail.com",
-    "year": 1,
-    "gpa": 3.92
-  },
-  {
-    "student_id": 16,
-    "name": "Rath Sophea",
-    "email": "rath.sophea16@gmail.com",
-    "year": 2,
-    "gpa": 3.68
-  },
-  {
-    "student_id": 17,
-    "name": "Thorn Sreynit",
-    "email": "thorn.sreynit17@gmail.com",
-    "year": 4,
-    "gpa": 3.77
-  },
-  {
-    "student_id": 18,
-    "name": "Ea Chamroeun",
-    "email": "ea.chamroeun18@gmail.com",
-    "year": 2,
-    "gpa": 3.33
-  },
-  {
-    "student_id": 19,
-    "name": "Long Chariya",
-    "email": "long.chariya19@gmail.com",
-    "year": 4,
-    "gpa": 3.89
-  },
-  {
-    "student_id": 20,
-    "name": "San Vichit",
-    "email": "san.vichit20@gmail.com",
-    "year": 3,
-    "gpa": 3.5
-  },
-  {
-    "student_id": 22,
-    "name": "dd",
-    "email": "dd@gmail.com",
-    "year": 1,
-    "gpa": 1.0
-  },
-  {
-    "student_id": 23,
-    "name": "yaya",
-    "email": "yaya123@gmail.com",
-    "year": 3,
-    "gpa": 4.0
-  }
+    {
+        "student_id": 1,
+        "name": "Nim Cheyseth",
+        "email": "nim.c@gmail.com",
+        "year": 2,
+        "gpa": 3.8
+    },
+    {
+        "student_id": 2,
+        "name": "Sok Dara",
+        "email": "sok.dara@gmail.com",
+        "year": 2,
+        "gpa": 3.5
+    },
+    {
+        "student_id": 3,
+        "name": "Chan Vuthy",
+        "email": "chan.vuthy@gmail.com",
+        "year": 2,
+        "gpa": 3.2
+    },
+    {
+        "student_id": 4,
+        "name": "Lim Sophea",
+        "email": "lim.sophea4@gmail.com",
+        "year": 2,
+        "gpa": 3.45
+    },
+    {
+        "student_id": 5,
+        "name": "Kong Malea",
+        "email": "kong.malea5@gmail.com",
+        "year": 2,
+        "gpa": 3.75
+    },
+    {
+        "student_id": 6,
+        "name": "Heng Vuthy",
+        "email": "heng.vuthy6@gmail.com",
+        "year": 2,
+        "gpa": 3.6
+    },
+    {
+        "student_id": 7,
+        "name": "Srey Pov",
+        "email": "srey.pov7@gmail.com",
+        "year": 1,
+        "gpa": 3.88
+    },
+    {
+        "student_id": 9,
+        "name": "Pov Chantra",
+        "email": "pov.chantra9@gmail.com",
+        "year": 4,
+        "gpa": 3.95
+    },
+    {
+        "student_id": 10,
+        "name": "Chhun Samnang",
+        "email": "chhun.samnang10@gmail.com",
+        "year": 1,
+        "gpa": 3.55
+    },
+    {
+        "student_id": 11,
+        "name": "Lim Sreypech",
+        "email": "lim.sreypech11@gmail.com",
+        "year": 1,
+        "gpa": 3.7
+    },
+    {
+        "student_id": 12,
+        "name": "Chea Vannak",
+        "email": "chea.vannak12@gmail.com",
+        "year": 1,
+        "gpa": 3.4
+    },
+    {
+        "student_id": 13,
+        "name": "Mao Sovanna",
+        "email": "mao.sovanna13@gmail.com",
+        "year": 2,
+        "gpa": 3.85
+    },
+    {
+        "student_id": 14,
+        "name": "Huot Rasmey",
+        "email": "huot.rasmey14@gmail.com",
+        "year": 2,
+        "gpa": 3.15
+    },
+    {
+        "student_id": 15,
+        "name": "Keo Mony",
+        "email": "keo.mony15@gmail.com",
+        "year": 1,
+        "gpa": 3.92
+    },
+    {
+        "student_id": 16,
+        "name": "Rath Sophea",
+        "email": "rath.sophea16@gmail.com",
+        "year": 2,
+        "gpa": 3.68
+    },
+    {
+        "student_id": 17,
+        "name": "Thorn Sreynit",
+        "email": "thorn.sreynit17@gmail.com",
+        "year": 4,
+        "gpa": 3.77
+    },
+    {
+        "student_id": 18,
+        "name": "Ea Chamroeun",
+        "email": "ea.chamroeun18@gmail.com",
+        "year": 2,
+        "gpa": 3.33
+    },
+    {
+        "student_id": 19,
+        "name": "Long Chariya",
+        "email": "long.chariya19@gmail.com",
+        "year": 4,
+        "gpa": 3.89
+    },
+    {
+        "student_id": 20,
+        "name": "San Vichit",
+        "email": "san.vichit20@gmail.com",
+        "year": 3,
+        "gpa": 3.5
+    },
+    {
+        "student_id": 22,
+        "name": "dd",
+        "email": "dd@gmail.com",
+        "year": 1,
+        "gpa": 1.0
+    },
+    {
+        "student_id": 23,
+        "name": "yaya",
+        "email": "yaya123@gmail.com",
+        "year": 3,
+        "gpa": 4.0
+    }
 ]
