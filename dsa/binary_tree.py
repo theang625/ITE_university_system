@@ -31,15 +31,33 @@ class BinaryTree:
                 current = current.right
 
     def search(self, key):
-        current = self.root
-        while current is not None:
-            if key == current.value[0]:
+        """Searches for a key in the binary tree with safe type matching."""
+        return self._search_recursive(self.root, key)
+
+    def _search_recursive(self, current, key):
+        if current is None:
+            return None
+
+        node_key = current.value[0]
+
+        # ព្យាយាមប្រៀបធៀបដោយផ្ទាល់ បើខុស Type គ្នា ត្រូវប្តូរទៅជា String ដូចគ្នាដើម្បីការពារ TypeError
+        try:
+            if key == node_key:
                 return current.value[1]
-            if key < current.value[0]:
-                current = current.left
+            elif key < node_key:
+                return self._search_recursive(current.left, key)
             else:
-                current = current.right
-        return None
+                return self._search_recursive(current.right, key)
+        except TypeError:
+            # ករណី Type មិនត្រូវគ្នា (str vs int) គឺប្តូរវាទៅជា string ទាំងអស់ដើម្បីប្រៀបធៀបបន្ត
+            str_key = str(key)
+            str_node_key = str(node_key)
+            if str_key == str_node_key:
+                return current.value[1]
+            elif str_key < str_node_key:
+                return self._search_recursive(current.left, key)
+            else:
+                return self._search_recursive(current.right, key)
 
     def inorder(self):
         result = []

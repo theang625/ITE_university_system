@@ -1,6 +1,7 @@
 [
     {
         "student_id": 1,
+<<<<<<< HEAD
         "name": "Nim Cheysith",
         "email": "nim.cheysith14@gmail.com",
         "year": 2,
@@ -19,6 +20,26 @@
         "email": "cha.visal114@gmail.com",
         "year": 2,
         "gpa": 3.89
+=======
+        "name": "Nim Cheyseth",
+        "email": "nim.c@gmail.com",
+        "year": 2,
+        "gpa": 3.80
+    },
+    {
+        "student_id": 2,
+        "name": "Sok Dara",
+        "email": "sok.dara@gmail.com",
+        "year": 2,
+        "gpa": 3.50
+    },
+    {
+        "student_id": 3,
+        "name": "Chan Vuthy",
+        "email": "chan.vuthy@gmail.com",
+        "year": 2,
+        "gpa": 3.20
+>>>>>>> origin/Seth2
     },
     {
         "student_id": 4,
@@ -141,8 +162,13 @@
     },
     {
         "student_id": 22,
+<<<<<<< HEAD
         "name": "HelloGuys",
         "email": "dd",
+=======
+        "name": "dd",
+        "email": "dd@gmail.com",
+>>>>>>> origin/Seth2
         "year": 1,
         "gpa": 1.0
     },

@@ -1,4 +1,5 @@
 [
+<<<<<<< HEAD
   {"user_id": 1,  "username": "nim.c",   "password": "changeme123", "role": "student", "linked_student_id": 1},
   {"user_id": 2,  "username": "sok.d",   "password": "changeme123", "role": "student", "linked_student_id": 2},
   {"user_id": 3,  "username": "chan.v",  "password": "changeme123", "role": "student", "linked_student_id": 3},
@@ -19,4 +20,28 @@
   {"user_id": 18, "username": "ea.c",    "password": "changeme123", "role": "student", "linked_student_id": 18},
   {"user_id": 19, "username": "long.c",  "password": "changeme123", "role": "student", "linked_student_id": 19},
   {"user_id": 20, "username": "san.v",   "password": "changeme123", "role": "student", "linked_student_id": 20}
+=======
+  {"user_id": 2,  "username": "nim.c",   "password": "changeme123", "role": "student", "linked_student_id": 1},
+  {"user_id": 3,  "username": "sok.d",   "password": "changeme123", "role": "student", "linked_student_id": 2},
+  {"user_id": 4,  "username": "chan.v",  "password": "changeme123", "role": "student", "linked_student_id": 3},
+  {"user_id": 5,  "username": "lim.so",  "password": "changeme123", "role": "student", "linked_student_id": 4},
+  {"user_id": 6,  "username": "kong.m",  "password": "changeme123", "role": "student", "linked_student_id": 5},
+  {"user_id": 7,  "username": "heng.v",  "password": "changeme123", "role": "student", "linked_student_id": 6},
+  {"user_id": 8,  "username": "srey.p",  "password": "changeme123", "role": "student", "linked_student_id": 7},
+  {"user_id": 9,  "username": "ouk.v",   "password": "changeme123", "role": "student", "linked_student_id": 8},
+  {"user_id": 10, "username": "pov.c",   "password": "changeme123", "role": "student", "linked_student_id": 9},
+  {"user_id": 11, "username": "chhun.s", "password": "changeme123", "role": "student", "linked_student_id": 10},
+  {"user_id": 12, "username": "lim.sr",  "password": "changeme123", "role": "student", "linked_student_id": 11},
+  {"user_id": 13, "username": "chea.v",  "password": "changeme123", "role": "student", "linked_student_id": 12},
+  {"user_id": 14, "username": "mao.s",   "password": "changeme123", "role": "student", "linked_student_id": 13},
+  {"user_id": 15, "username": "huot.r",  "password": "changeme123", "role": "student", "linked_student_id": 14},
+  {"user_id": 16, "username": "keo.m",   "password": "changeme123", "role": "student", "linked_student_id": 15},
+  {"user_id": 17, "username": "rath.s",  "password": "changeme123", "role": "student", "linked_student_id": 16},
+  {"user_id": 18, "username": "thorn.s", "password": "changeme123", "role": "student", "linked_student_id": 17},
+  {"user_id": 19, "username": "ea.c",    "password": "changeme123", "role": "student", "linked_student_id": 18},
+  {"user_id": 20, "username": "long.c",  "password": "changeme123", "role": "student", "linked_student_id": 19},
+  {"user_id": 21, "username": "san.v",   "password": "changeme123", "role": "student", "linked_student_id": 20},
+  {"user_id": 22, "username": "dd",      "password": "changeme123", "role": "student", "linked_student_id": 22},
+  {"user_id": 23, "username": "yaya",    "password": "changeme123", "role": "student", "linked_student_id": 23}
+>>>>>>> origin/Seth2
 ]
