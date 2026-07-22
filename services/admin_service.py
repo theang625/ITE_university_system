@@ -3,7 +3,6 @@ from models.course import Course
 from models.student import Student
 from dsa.hash_table import HashTable
 from dsa.binary_tree import BinaryTree
-from dsa.graph import Graph
 from models.student import Student
 from models.enrollment import Enrollment
 import json
@@ -14,7 +13,7 @@ class AdminService:
         self.admins = []
         self.hash_table = HashTable()
         self.courses_tree = BinaryTree()
-        self.enrollment_graph = Graph()
+
 
     def add_admin(self, admin_id, name):
         admin = Admin(admin_id, name)
@@ -113,11 +112,6 @@ class AdminService:
         self.courses_tree.insert(course_id, course)
         self.enrollment_graph.add_vertex(course_id)
         return course
-
-    def delete_course(self, course_id):
-        self.courses_tree.remove(course_id)
-        self.enrollment_graph.remove_vertex(course_id)
-        return True
 
     def view_courses(self):
         return [course for _, course in self.courses_tree.inorder()]
