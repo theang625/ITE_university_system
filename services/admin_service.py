@@ -1,5 +1,6 @@
 import json
 import os
+from utils.menu import *
 from models.admin import Admin
 from models.course import Course
 from models.student import Student
@@ -9,23 +10,24 @@ from dsa.binary_tree import BinaryTree
 from dsa.graph import Graph
 from dsa.stack import Stack
 
-
 class AdminService:
     def __init__(self):
         # 1. Initialize Data Structures
         self.students_table = HashTable()
         self.courses_tree = BinaryTree()
         self.enrollment_graph = Graph()
-        self.prereq_graph = Graph()  # Dedicated graph for course prerequisites
-
-        # 🚀 NEW: Initialize the Undo Stack
+        self.prereq_graph = Graph()  
         self.undo_stack = Stack()
-
-        # 2. Load Data into Memory on Startup
+        
+        self._load_courses_from_json()
         self._load_table_from_json()
         self._load_courses_from_json()
         self._load_prereqs_from_json()
-        self._load_enrollments_from_json()  # 🔄 Load graph enrollments on startup
+        self._load_enrollments_from_json() 
+        self.courses_tree = BinaryTree()
+        self.courses_tree.load_from_json("Course.json", "course_id")
+        self.students_table = HashTable()
+        self.students_table.load_from_json("students.json", "student_id")
 
     def _load_table_from_json(self):
         """Rebuilds the student hash table from JSON on startup."""
@@ -44,7 +46,6 @@ class AdminService:
             courses = json.load(f)
 
         for c in courses:
-            # គាំទ្រទាំង course_code និង course_id ពីក្នុង JSON
             c_id = c.get("course_code", c.get("course_id"))
             title = c.get("course_name", c.get("title", "Unknown Title"))
             credits = c.get("credits", 3)
@@ -69,7 +70,6 @@ class AdminService:
             if course and prerequisite:
                 self.prereq_graph.add_edge(prerequisite, course)
 
-    # 🔄 មុខងារទាញយកទិន្នន័យ Enrollment ពេលបើកកម្មវិធី (Graph Persistence Load)
     def _load_enrollments_from_json(self):
         """Loads enrollments from Enrollment.json into the graph on startup."""
         file_path = "Enrollment.json"
@@ -94,7 +94,6 @@ class AdminService:
 
         try:
             vertices = []
-            # ឆែកមើល Method ផ្សេងៗដែល Graph អាចមានដើម្បីទយក Vertices
             if hasattr(self.enrollment_graph, 'get_vertices') and callable(self.enrollment_graph.get_vertices):
                 vertices = self.enrollment_graph.get_vertices()
             elif hasattr(self.enrollment_graph, 'vertices'):
@@ -112,7 +111,6 @@ class AdminService:
                         "course_id": c_id
                     })
         except Exception as e:
-            # គ្នារឿងភ័យព្រួយ ប្រសិនបើកន្លែងនេះទាញមិនចេញ គឺយើងអាន File ចាស់មកទុកសិនដើម្បីកុំឱ្យបាត់ទិន្នន័យ
             if os.path.exists(file_path):
                 with open(file_path, "r", encoding="utf-8") as f:
                     all_enrollments = json.load(f)
@@ -123,7 +121,23 @@ class AdminService:
     # ==========================================
     # STUDENT OPERATIONS
     # ==========================================
+    
+    def generate_student_id(self):
+        """Auto-generate the next student_id in S01, S02... format."""
+        students = Student.load_students()
+
+        if not students:
+            return "S01"
+
+        # Extract the numeric part from each ID (e.g. "S12" -> 12)
+        numbers = [int(student["student_id"][1:]) for student in students]
+        next_number = max(numbers) + 1
+
+        return f"S{next_number}"  # pads with a leading zero if needed (S01–S09), grows naturally past S99
     def add_student(self, student_id, name, email, year, gpa):
+        
+        student_id = self.generate_student_id()
+        
         if self.students_table.get(student_id) is not None:
             print(f"Student ID {student_id} already exists.")
             return None
@@ -198,19 +212,37 @@ class AdminService:
         return student
 
     def view_students(self):
-        with open("students.json", "r", encoding="utf-8") as f:
-            students = json.load(f)
+        """Load students into the hash table, then display via the hash table."""
+        
+        # 1. Load from JSON and insert into hash table (one by one)
+        students = Student.load_students()
         for student in students:
-            print(f"Student ID: {student['student_id']}, Name: {student['name']}")
+            self.students_table.insertion(student["student_id"], student)
 
-    def get_student(self, student_id):
-        return self.students_table.get(student_id)
+        # 2. Display by reading from the hash table, not directly from JSON
+        all_students = self.students_table.values()
+
+        if not all_students:
+            print("No students found.")
+            return []
+
+        print("-" * 60)
+        print("STUDENT LIST".center(60))
+        print("-" * 60)
+        for student in all_students:
+            print(f"ID: {student['student_id']:<6} "
+                f"Name: {student['name']:<20} "
+                f"Email: {student['email']:<30} "
+                f"Year: {student['year']:<3} "
+                f"GPA: {student['gpa']}")
+        print("=" * 60)
+
+        return
 
     def get_student_by_id(self, student_id):
         """Alias for get_student for consistency."""
         return self.students_table.get(student_id)
-
-    # 🚀 មុខងារស្វែងរកសិស្សតាមឈ្មោះ (Search by Name)
+    
     def search_students_by_name(self, name_query):
         """Searches for students whose names contain the given query string (case-insensitive)."""
         file_path = "students.json"
@@ -231,11 +263,28 @@ class AdminService:
     # ==========================================
     # COURSE & ENROLLMENT OPERATIONS
     # ==========================================
-    def add_course(self, course_id, title, credits):
-        course = Course(course_id, title, credits)
-        self.courses_tree.insert(course_id, course)
+    def add_course(self, course_id, course_code, course_name, year_level, active=True):
+    # Check for duplicates first
+        if self.courses_tree.search(course_id) is not None:
+            print(f"Course ID {course_id} already exists.")
+            return None
+        active = True
+        new_course = {
+            "course_id": course_id,
+            "course_code": course_code,
+            "course_name": course_name,
+            "year_level": year_level,
+            "active": active
+        }
+        self.courses_tree.insert(course_id, new_course)
         self.enrollment_graph.add_vertex(course_id)
-        return course
+
+        courses = Course.load_courses()
+        courses.append(new_course)
+        Course.save_courses(courses)
+
+        print(f"Course '{course_name}' added successfully.")
+        return new_course
 
     def delete_course(self, course_id):
         print(f"Trying to delete: {repr(course_id)}")  # debug line
@@ -260,9 +309,25 @@ class AdminService:
         return True
 
     def view_courses(self):
-        """Returns all courses by traversing the binary tree in-order."""
-        self._load_courses_from_json()
-        return [course for _, course in self.courses_tree.inorder()]
+        """Step 3: Traverse the tree (in-order = sorted by course_id) and display."""
+        courses = [course for _, course in self.courses_tree.inorder()]
+
+        if not courses:
+            print("No courses found.")
+            return []
+
+        print("=" * 60)
+        print("COURSE LIST (sorted by ID via tree traversal)".center(60))
+        print("=" * 60)
+        for course in courses:
+            print(f"ID: {course['course_id']:<5} "
+                  f"Code: {course['course_code']:<10} "
+                  f"Name: {course['course_name']:<20} "
+                  f"Year: {course['year_level']:<3} "
+                  f"Active: {course['active']}")
+        print("=" * 60)
+
+        return 
 
     def get_course(self, course_id):
         """Safely searches for a course in the binary tree by handling type matching."""
@@ -279,12 +344,11 @@ class AdminService:
         except (ValueError, TypeError):
             return None
 
-    # 🛡️ មុខងារឆែកមុខវិជ្ជាត្រួតពិនិត្យមុន (Prerequisite Validation)
     def check_prerequisites(self, student_id, course_id):
         """Checks if a student has completed the prerequisites for a course."""
         required_courses = self.prereq_graph.get_neighbors(course_id)
         if not required_courses:
-            return True  # អត់មានទាមទារមុខវិជ្ជាមុនទេ
+            return True 
 
         enrolled_courses = self.enrollment_graph.get_neighbors(student_id)
 
@@ -296,12 +360,12 @@ class AdminService:
         return True
 
     def enroll_student(self, student_id, course_id):
-        # ឆែក Prerequisites មុននឹងអនុញ្ញាតឱ្យ Enroll
+
         if not self.check_prerequisites(student_id, course_id):
             return False
 
         self.enrollment_graph.add_edge(student_id, course_id)
-        self.save_enrollments_to_json()  # 💾 Save ចូល file ស្វ័យប្រវត្តិ
+        self.save_enrollments_to_json() 
         return True
 
     # ==========================================
@@ -317,7 +381,7 @@ class AdminService:
             }
 
             self.undo_stack.push(action_log)
-            self.save_enrollments_to_json()  # 💾 Save ចូល file ស្វ័យប្រវត្តិក្រោយពេល Drop
+            self.save_enrollments_to_json() 
             print(f"Success: Dropped {course_id} for {student_id}.")
             return True
 

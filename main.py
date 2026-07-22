@@ -1,4 +1,4 @@
-from utils.menu import show_admin_menu, show_main_menu, show_student_menu, login, get_admins, get_student, student_login
+from utils.menu import show_admin_menu, show_main_menu, show_student_menu, login, get_student, student_login
 import json
 
 

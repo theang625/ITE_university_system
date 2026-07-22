@@ -2,6 +2,7 @@ from services.admin_service import AdminService
 from models.student import Student
 from dsa.hash_table import HashTable
 from models.admin import Admin
+from models.course import Course
 import json
 
 admin_service = AdminService()
@@ -28,7 +29,6 @@ def login(username, password):
     print("Invalid username or password")
     return False
 
-
 def student_login(username, password):
     try:
         with open("Userstudent.json", "r") as f:
@@ -48,16 +48,17 @@ def student_login(username, password):
         print(f"Error: Could not find 'Userstudent.json'. Please check the file name.")
         return False
 
+def generate_course_id() :
+    courses = Course.load_courses()
+    
+    if not courses:
+        return 1
 
-def get_admins():
-    with open("admins.json", "r") as f:
-        admins_data = json.load(f)
+    numbers = [(course["course_id"]) for course in courses]
+    next_number = max(numbers) + 1
 
-    for admin in admins_data:
-        print(f"Username: {admin['username']}")
-    return show_main_menu()
-
-
+    return next_number
+    
 def show_admin_menu():
     while True:
         print("=" * 35)
@@ -69,27 +70,28 @@ def show_admin_menu():
         print("2. Delete Student")
         print("3. Update Student")
         print("4. View Students")
-        print("5. Enter student ID to search")
-        print("5.2. Enter student Name to search")  # មុខងារស្វែងរកតាមឈ្មោះថ្មីយ៉ាងអេម
+        print("5. Enter student Name to search") 
         print("6. Add Course")
         print("7. Delete Course")
-        print("8. Logout")
-        print("9. Undo Last Action")
-        print("10. Drop Course for Student (Un-enroll)")
-        print("11. Enroll Student in Multiple Courses")
+        print("8. Undo Last Action")
+        print("9. Drop Course for Student (Un-enroll)")
+        print("10. Enroll Student in Multiple Courses")
+        print("11. View all Courses.")
+        print("0. Logout")
 
         choice = input("Enter your choice for admin menu: ")
 
         if choice == "1":
-            student_id = int(input("Enter student ID: "))
             name = str(input("Enter student name: "))
             email = str(input("Enter student email: "))
             year = int(input("Enter student year: "))
             gpa = float(input("Enter student GPA: "))
 
+            student_id = admin_service.generate_student_id() 
             result = admin_service.add_student(student_id, name, email, year, gpa)
+
             if result is not None:
-                print("Student added successfully")
+                print(f"Student added successfully with ID: {student_id}")
 
         elif choice == "2":
             student_id = int(input("Enter student ID to delete: "))
@@ -115,21 +117,6 @@ def show_admin_menu():
             print(admin_service.view_students())
 
         elif choice == "5":
-            student_id = int(input("Enter student ID to search: "))
-            student = admin_service.get_student(student_id)
-
-            if student:
-                print("=" * 35)
-                print(f"ID: {student['student_id']}")
-                print(f"Name: {student['name']}")
-                print(f"Email: {student['email']}")
-                print(f"Year: {student['year']}")
-                print(f"GPA: {student['gpa']}")
-                print("=" * 35)
-            else:
-                print(f"Student ID {student_id} not found.")
-
-        elif choice == "5.2":
             print("\n" + "=" * 40)
             print("       SEARCH STUDENT BY NAME")
             print("=" * 40)
@@ -154,11 +141,16 @@ def show_admin_menu():
             print("=" * 40 + "\n")
 
         elif choice == "6":
-            course_id = input("Enter course ID: ")
-            title = input("Enter course title: ")
-            credits = int(input("Enter credits: "))
-            admin_service.add_course(course_id, title, credits)
-            print("Course added successfully")
+            course_code = input("Enter course code: ")
+            course_name = input("Enter course name: ")
+            year_level = int(input("Enter year level: "))
+            active = bool(input("Keep it blank for active course: "))
+            
+            course_id = generate_course_id()
+            
+            result = admin_service.add_course(course_id, course_code, course_name, year_level, active)
+            if result:
+                print("Course added successfully")
 
         elif choice == "7":
             course_id = input("Enter course ID to delete: ")
@@ -166,10 +158,6 @@ def show_admin_menu():
             print("Course deleted successfully")
 
         elif choice == "8":
-            print("Logged out")
-            break
-
-        elif choice == "9":
             print("\n" + "=" * 35)
             print("          UNDO SYSTEM")
             print("=" * 35)
@@ -188,13 +176,13 @@ def show_admin_menu():
 
             print("=" * 35 + "\n")
 
-        elif choice == "10":
+        elif choice == "9":
             print("\n--- Un-enroll Student ---")
             student_id = int(input("Enter Student ID: "))
             course_id = input("Enter Course ID to drop: ")
             admin_service.admin_drop_course(student_id, course_id)
 
-        elif choice == "11":
+        elif choice == "10":
             print("\n--- Enroll Student in Multiple Courses ---")
             try:
                 student_id = int(input("Enter Student ID: "))
@@ -202,7 +190,7 @@ def show_admin_menu():
                 course_ids = [c.strip() for c in courses_input.split(",") if c.strip()]
 
                 if not course_ids:
-                    print("⚠️ No valid course IDs provided.")
+                    print("No valid course IDs provided.")
                 else:
                     success_count = 0
                     for c_id in course_ids:
@@ -212,11 +200,19 @@ def show_admin_menu():
                     print(
                         f"SUCCESS: Enrolled Student ID {student_id} into {success_count} course(s): {', '.join(course_ids)}")
             except ValueError:
-                print("⚠️ Invalid input. Student ID must be a number.")
-
+                print("Invalid input. Student ID must be a number.")
+                
+        elif choice == "11":
+            print("View Courses: ")
+            print(admin_service.view_courses())
+                
+        elif choice == "0":
+            print("Logged out")
+            break
         else:
             print("Invalid choice")
-
+            
+        
 
 def show_student_menu(student_id):
     while True:
