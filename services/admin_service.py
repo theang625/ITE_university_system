@@ -6,14 +6,10 @@ from models.student import Student
 from models.enrollment import Enrollment
 from dsa.hash_table import HashTable
 from dsa.binary_tree import BinaryTree
-<<<<<<< HEAD
- 
-=======
 from dsa.graph import Graph
 from dsa.stack import Stack
 
 
->>>>>>> origin/Seth2
 class AdminService:
     def __init__(self):
         # 1. Initialize Data Structures
@@ -123,12 +119,8 @@ class AdminService:
         return True
 
     def update_student(self, student_id, name=None, email=None, year=None, gpa=None):
-<<<<<<< HEAD
-        students = Student.load_students() 
 
-=======
         students = Student.load_students()
->>>>>>> origin/Seth2
         student = None
         for s in students:
             if s["student_id"] == student_id:
@@ -164,12 +156,7 @@ class AdminService:
         for student in students:
             print(f"Student ID: {student['student_id']}, Name: {student['name']}")
 
-<<<<<<< HEAD
-    def get_student_by_id(self, student_id):
-        # We can now use the ultra-fast hash table instead of a slow loop!
-=======
     def get_student(self, student_id):
->>>>>>> origin/Seth2
         return self.students_table.get(student_id)
     
     def get_student_by_name(self, name):
@@ -178,7 +165,6 @@ class AdminService:
     # ==========================================
     # COURSE & ENROLLMENT OPERATIONS
     # ==========================================
-<<<<<<< HEAD
     def add_course(self, course_id, course_code, course_name, year_level, active=True):
         if self.courses_tree.search(course_id) is not None:
             print(f"Course ID {course_id} already exists.")
@@ -204,14 +190,13 @@ class AdminService:
 
         print(f"Course '{course_name}' added successfully.")
         return new_course
-=======
+
     def add_course(self, course_id, title, credits):
         course = Course(course_id, title, credits)
         self.courses_tree.insert(course_id, course)
         self.enrollment_graph.add_vertex(course_id)
         return course
->>>>>>> origin/Seth2
-
+    
     def delete_course(self, course_id):
         print(f"Trying to delete: {repr(course_id)}")  # debug line
         

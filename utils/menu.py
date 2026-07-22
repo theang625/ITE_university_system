@@ -50,12 +50,6 @@ def student_login(username, password):
     except FileNotFoundError:
         print(f"Error: Could not find {"Userstudent.json"}. Please check the file name.")
         return False
-<<<<<<< HEAD
-    
-# -------------------------------
-=======
-
->>>>>>> origin/Seth2
 
 def get_admins():
     with open("admins.json", "r") as f:
@@ -71,20 +65,6 @@ def show_admin_menu():
     while True:
         print("=" * 35)
         print(" " * 4, end=" ")
-<<<<<<< HEAD
-        print("  Welcome to Admin Menu")
-        print("=" * 35)
-        print("\nAdmin Menu.")
-        print("1. Add Student.")
-        print("2. Delete Student.")
-        print("3. Update Student.")
-        print("4. View Students.")
-        print("5. Enter student ID or Name to search.")
-        print("6. Add Course.")
-        print("7. Delete Course.")
-        print("8. View all courses.")
-        print("9. Logout.")
-=======
         print("Welcome to Admin Menu")
         print("=" * 30)
         print("\nAdmin Menu")
@@ -99,7 +79,6 @@ def show_admin_menu():
         print("9. Undo Last Action")
         print("10. Drop Course for Student (Un-enroll)")
         print("11. Enroll Student in Multiple Courses ")  # ធ្វើបច្ចុប្បន្នភាពមុខងារថ្មី
->>>>>>> origin/Seth2
 
         choice = input("Enter your choice for admin menu: ")
 
@@ -151,18 +130,6 @@ def show_admin_menu():
                 print(f"Student ID {student_id} not found.")
 
         elif choice == "6":
-<<<<<<< HEAD
-            course_id = int(input("Enter course ID: "))
-            course_code = input("Enter course code: ")
-            course_name = input("Enter course name: ")
-            year_level = input("Enter year level: ")
-            active = bool(input("Is the course active? (Leave it blank for active.): "))
-            admin_service.add_course(course_id, course_code, course_name, year_level, active)
-            print("Course added successfully")
-
-        elif choice == "7":
-            course_id = int(input("Enter course ID to delete: "))
-=======
             course_id = input("Enter course ID: ")
             title = input("Enter course title: ")
             credits = int(input("Enter credits: "))
@@ -171,7 +138,6 @@ def show_admin_menu():
 
         elif choice == "7":
             course_id = input("Enter course ID to delete: ")
->>>>>>> origin/Seth2
             admin_service.delete_course(course_id)
             print("Course deleted successfully")
             
@@ -180,11 +146,8 @@ def show_admin_menu():
             for course in courses:
                 print
 
-<<<<<<< HEAD
-        elif choice == "9":
-=======
         elif choice == "8":
->>>>>>> origin/Seth2
+
             print("Logged out")
             break
 
@@ -241,18 +204,6 @@ def show_admin_menu():
         else:
             print("Invalid choice")
 
-<<<<<<< HEAD
-# Add student_id as a parameter
-def show_student_menu(student_id):
-    while True:
-        print("\n" + "-" * 45)
-        print(" " * 14 + "STUDENT MENU")
-        print("-" * 45)
-        print("\n1. View Profile.")
-        print("2. View Registered courses.")
-        print("3. Go back to Main Menu.")
-=======
-
 def show_student_menu(student_id):
     while True:
         print("=" * 40)
@@ -260,7 +211,6 @@ def show_student_menu(student_id):
         print("=" * 40)
         print("\n1. View Profile & My Courses.")
         print("2. Go back to Main Menu.")
->>>>>>> origin/Seth2
 
         choice = input("Enter your choice for student menu: ")
 
@@ -268,23 +218,15 @@ def show_student_menu(student_id):
             student = admin_service.get_student(student_id)
 
             if student:
-<<<<<<< HEAD
-                print("\n" + "=" * 35)
-                print("            MY PROFILE")
-                print("-" * 35)
-=======
                 print("\n" + "=" * 50)
                 print("      🎓 MY PROFILE & COURSES")
                 print("=" * 50)
->>>>>>> origin/Seth2
+
                 print(f"ID:    {student['student_id']}")
                 print(f"Name:  {student['name']}")
                 print(f"Email: {student['email']}")
                 print(f"Year:  {student['year']}")
                 print(f"GPA:   {student['gpa']}")
-<<<<<<< HEAD
-                print("=" * 35 + "\n")
-=======
                 print("-" * 50)
                 print("📚 Enrolled Courses:")
 
@@ -307,7 +249,7 @@ def show_student_menu(student_id):
                             print(f"   - Course Code: {course_id} (Details missing)")
 
                 print("=" * 50 + "\n")
->>>>>>> origin/Seth2
+
             else:
                 print("\nError: Profile not found in database.\n")
 
