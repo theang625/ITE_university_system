@@ -287,25 +287,32 @@ class AdminService:
         return new_course
 
     def delete_course(self, course_id):
-        print(f"Trying to delete: {repr(course_id)}")  # debug line
+        print(f"Trying to delete: {repr(course_id)}")
 
         removed = self.courses_tree.remove(course_id)
-        print(f"Tree said removed = {removed}")  # debug line
+        print(f"Tree said removed = {removed}")
 
         if not removed:
             print(f"Course ID {course_id} not found.")
             return False
 
         courses = Course.load_courses()
-        print(f"Courses before: {courses}")  # debug line
+        print("\n--- Courses BEFORE deletion ---")
+        print(f"Total: {len(courses)}")
+        for c in courses:
+            print(f"  ID: {c['course_id']:<4} | {c['course_name']}")
 
         courses = [c for c in courses if c["course_id"] != course_id]
-        print(f"Courses after: {courses}")  # debug line
+
+        print("\n--- Courses AFTER deletion ---")
+        print(f"Total: {len(courses)}")
+        for c in courses:
+            print(f"  ID: {c['course_id']:<4} | {c['course_name']}")
+        print()
 
         Course.save_courses(courses)
 
-        if removed:
-            print(f"Course ID {course_id} deleted successfully.")
+        print(f"Course ID {course_id} deleted successfully.")
         return True
 
     def view_courses(self):
@@ -317,7 +324,7 @@ class AdminService:
             return []
 
         print("=" * 60)
-        print("COURSE LIST (sorted by ID via tree traversal)".center(60))
+        print("COURSE LIST".center(60))
         print("=" * 60)
         for course in courses:
             print(f"ID: {course['course_id']:<5} "
@@ -344,46 +351,81 @@ class AdminService:
         except (ValueError, TypeError):
             return None
 
-    def check_prerequisites(self, student_id, course_id):
-        """Checks if a student has completed the prerequisites for a course."""
-        required_courses = self.prereq_graph.get_neighbors(course_id)
-        if not required_courses:
-            return True 
-
-        enrolled_courses = self.enrollment_graph.get_neighbors(student_id)
-
-        for req in required_courses:
-            if req not in enrolled_courses:
-                print(
-                    f"⚠️ Prerequisite Error: Course {course_id} requires prerequisite [{req}], which the student has not completed yet.")
-                return False
-        return True
-
     def enroll_student(self, student_id, course_id):
+        """Show student's current enrollments, then enroll them in a new course via the graph."""
 
-        if not self.check_prerequisites(student_id, course_id):
+        # 1. Show courses this student is already enrolled in
+        current_courses = self.enrollment_graph.get_neighbors(student_id)
+
+
+        # 2. Prevent duplicate enrollment in the same course
+        if course_id in current_courses:
+            print(f"Error: Student is already enrolled in course {course_id}.")
             return False
 
+        # 4. Add the edge (student <-> course) and persist
         self.enrollment_graph.add_edge(student_id, course_id)
-        self.save_enrollments_to_json() 
+        self.save_enrollments_to_json()
+
+        course = self.courses_tree.search(course_id)
+        course_name = course["course_name"] if course else course_id
+        print(f"Success: Enrolled student {student_id} in {course_name}.")
+
         return True
 
-    # ==========================================
-    # UNDO STACK LOGIC
-    # ==========================================
-    def admin_drop_course(self, student_id, course_id):
-        """Admin removes a course, but we save it in case of a mistake."""
-        if self.enrollment_graph.remove_edge(student_id, course_id):
-            action_log = {
-                "type": "drop_course",
-                "student_id": student_id,
-                "course_id": course_id
-            }
+    def admin_drop_course(self, student_id):
+        """Admin views a student's enrolled courses (from the graph), picks one, and drops it."""
 
-            self.undo_stack.push(action_log)
-            self.save_enrollments_to_json() 
-            print(f"Success: Dropped {course_id} for {student_id}.")
-            return True
+        enrolled_course_ids = self.enrollment_graph.get_neighbors(student_id)
 
-        print("Error: Could not drop course.")
-        return False
+        if not enrolled_course_ids:
+            print(f"Student {student_id} is not enrolled in any courses.")
+            return False
+
+        print("=" * 50)
+        print(f"---Courses enrolled by Student--- {student_id}".center(50))
+        print("=" * 50)
+        for course_id in enrolled_course_ids:
+            course = self.courses_tree.search(course_id)
+            if course:
+                print(f"  ID: {course['course_id']:<4} | {course['course_name']}")
+            else:
+                print(f"  ID: {course_id} | (course details not found)")
+        print("=" * 50)
+
+        course_id = int(input("Enter course ID to drop: "))
+
+        if course_id not in enrolled_course_ids:
+            print(f"Error: Student is not enrolled in course {course_id}.")
+            return False
+
+        # 1. Remove from the graph (in-memory)
+        self.enrollment_graph.remove_edge(student_id, course_id)
+
+        # 2. Remove from enrollments.json directly by matching student_id AND course_id
+        enrollments = Enrollment.load_enrollments()  # adjust to your actual loader
+        before_count = len(enrollments)
+
+        enrollments = [
+            e for e in enrollments
+            if not (str(e["student_id"]) == str(student_id) and int(e["course_id"]) == int(course_id))
+        ]
+
+        after_count = len(enrollments)
+
+        if before_count == after_count:
+            print(f"Warning: No matching enrollment record found in JSON for student {student_id}, course {course_id}.")
+        else:
+            Enrollment.save_enrollments(enrollments)  # adjust to your actual saver
+            print(f"Removed {before_count - after_count} enrollment record(s) from JSON.")
+
+        # 3. Log for undo
+        action_log = {
+            "type": "drop_course",
+            "student_id": student_id,
+            "course_id": course_id
+        }
+        self.undo_stack.push(action_log)
+
+        print(f"Success: Dropped course {course_id} for student {student_id}.")
+        return True
