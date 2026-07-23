@@ -9,6 +9,7 @@ from dsa.hash_table import HashTable
 from dsa.binary_tree import BinaryTree
 from dsa.graph import Graph
 from dsa.stack import Stack
+from datetime import datetime
 
 class AdminService:
     def __init__(self):
@@ -30,13 +31,13 @@ class AdminService:
         self.students_table.load_from_json("students.json", "student_id")
 
     def _load_table_from_json(self):
-        """Rebuilds the student hash table from JSON on startup."""
+  
         students = Student.load_students()
         for s in students:
             self.students_table.insertion(s["student_id"], s)
 
     def _load_courses_from_json(self):
-        """Rebuilds the course Binary Tree from JSON so it's not empty!"""
+        
         file_path = "Course.json"
         if not os.path.exists(file_path):
             print(f"Warning: Course file not found at {file_path}")
@@ -56,8 +57,8 @@ class AdminService:
                 self.enrollment_graph.add_vertex(c_id)
 
     def _load_prereqs_from_json(self):
-        """Loads course prerequisites into the prereq_graph."""
-        file_path = "course_require.json"  # Clean filename convention
+
+        file_path = "course_require.json"  
         if not os.path.exists(file_path):
             return
 
@@ -71,7 +72,7 @@ class AdminService:
                 self.prereq_graph.add_edge(prerequisite, course)
 
     def _load_enrollments_from_json(self):
-        """Loads enrollments from Enrollment.json into the graph on startup."""
+ 
         file_path = "Enrollment.json"
         if not os.path.exists(file_path):
             return
@@ -88,7 +89,7 @@ class AdminService:
                 print(f"Error loading enrollments: {e}")
 
     def save_enrollments_to_json(self):
-        """Saves current graph enrollments to Enrollment.json safely without crashing."""
+
         file_path = "Enrollment.json"
         all_enrollments = []
 
@@ -129,11 +130,10 @@ class AdminService:
         if not students:
             return "S01"
 
-        # Extract the numeric part from each ID (e.g. "S12" -> 12)
         numbers = [int(student["student_id"][1:]) for student in students]
         next_number = max(numbers) + 1
 
-        return f"S{next_number}"  # pads with a leading zero if needed (S01–S09), grows naturally past S99
+        return f"S{next_number}" 
     def add_student(self, student_id, name, email, year, gpa):
         
         student_id = self.generate_student_id()
@@ -151,7 +151,6 @@ class AdminService:
         }
 
         self.students_table.insertion(student_id, new_student)
-
         students = Student.load_students()
         students.append(new_student)
         Student.save_students(students)
@@ -352,21 +351,35 @@ class AdminService:
             return None
 
     def enroll_student(self, student_id, course_id):
-        """Show student's current enrollments, then enroll them in a new course via the graph."""
+        """Show student's current enrollments, then enroll them in a new course."""
 
-        # 1. Show courses this student is already enrolled in
+        # 1. Show courses this student is already enrolled in (via graph)
         current_courses = self.enrollment_graph.get_neighbors(student_id)
 
-
-        # 2. Prevent duplicate enrollment in the same course
+        # 2. Prevent duplicate enrollment
         if course_id in current_courses:
             print(f"Error: Student is already enrolled in course {course_id}.")
             return False
 
-        # 4. Add the edge (student <-> course) and persist
+        # 3. Add the edge in the graph (memory)
         self.enrollment_graph.add_edge(student_id, course_id)
-        self.save_enrollments_to_json()
 
+        # 4. Load existing enrollments, append the new one, save (disk)
+        enrollments = Enrollment.load_enrollments()
+
+        new_enrollment_id = (max((e["enrollment_id"] for e in enrollments), default=0)) + 1
+        new_enrollment = {
+            "enrollment_id": new_enrollment_id,
+            "student_id": student_id,
+            "course_id": course_id,
+            "grade": None,
+            "enrolled_date": datetime.now().strftime("%Y-%m-%d")
+        }
+
+        enrollments.append(new_enrollment)
+        Enrollment.save_enrollments(enrollments)
+
+        # 5. Confirm success
         course = self.courses_tree.search(course_id)
         course_name = course["course_name"] if course else course_id
         print(f"Success: Enrolled student {student_id} in {course_name}.")
@@ -399,11 +412,9 @@ class AdminService:
             print(f"Error: Student is not enrolled in course {course_id}.")
             return False
 
-        # 1. Remove from the graph (in-memory)
         self.enrollment_graph.remove_edge(student_id, course_id)
 
-        # 2. Remove from enrollments.json directly by matching student_id AND course_id
-        enrollments = Enrollment.load_enrollments()  # adjust to your actual loader
+        enrollments = Enrollment.load_enrollments() 
         before_count = len(enrollments)
 
         enrollments = [
@@ -416,10 +427,9 @@ class AdminService:
         if before_count == after_count:
             print(f"Warning: No matching enrollment record found in JSON for student {student_id}, course {course_id}.")
         else:
-            Enrollment.save_enrollments(enrollments)  # adjust to your actual saver
+            Enrollment.save_enrollments(enrollments) 
             print(f"Removed {before_count - after_count} enrollment record(s) from JSON.")
-
-        # 3. Log for undo
+            
         action_log = {
             "type": "drop_course",
             "student_id": student_id,

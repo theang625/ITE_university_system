@@ -7,7 +7,7 @@ from models.course import Course
 import json
 
 admin_service = AdminService()
-studet_service = StudentService(admin_service)
+student_service = StudentService(admin_service)
 
 def show_main_menu():
     print("MAIN MENU".center(45))
@@ -243,13 +243,14 @@ def show_student_menu(student_id):
         print("1. View Profile & My Courses.")
         print("2. View aveliable courses.")
         print("3. View my GPA rank.")
-        print("4. Go back to Main Menu.")
+        print("4. Enroll into a course.")
+        print("5. Go back to Main Menu.")
 
         choice = input("Enter your choice for student menu: ")
 
         if choice == "1":
             student = admin_service.get_student_by_id(student_id)  # matches actual method name
-            studet_service.view_profile(student)
+            student_service.view_profile(student)
         
         elif choice == "2":
             print("Available Courses: ")
@@ -258,9 +259,14 @@ def show_student_menu(student_id):
         elif choice == "3":
             print("View my GPA rank.")
             student = admin_service.get_student_by_id(student_id)
-            studet_service.view_rank_by_gpa(student_id)
-
+            student_service.view_rank_by_gpa(student_id)
+            
         elif choice == "4":
+            print("Enroll into a course.")
+            student = admin_service.get_student_by_id(student_id)
+            student_service.enroll_self(student_id)
+
+        elif choice == "5":
             print("Going back to Main Menu...")
             break
 
