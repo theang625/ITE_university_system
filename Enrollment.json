@@ -103,5 +103,47 @@
         "course_id": 3,
         "grade": null,
         "enrolled_date": "2026-01-12"
+    },
+    {
+        "enrollment_id": 15,
+        "student_id": "S02",
+        "course_id": 2,
+        "grade": null,
+        "enrolled_date": "2026-07-23"
+    },
+    {
+        "enrollment_id": 16,
+        "student_id": "S02",
+        "course_id": 3,
+        "grade": null,
+        "enrolled_date": "2026-07-23"
+    },
+    {
+        "enrollment_id": 17,
+        "student_id": "S15",
+        "course_id": 4,
+        "grade": null,
+        "enrolled_date": "2026-07-23"
+    },
+    {
+        "enrollment_id": 18,
+        "student_id": "S15",
+        "course_id": 5,
+        "grade": null,
+        "enrolled_date": "2026-07-23"
+    },
+    {
+        "enrollment_id": 19,
+        "student_id": "S01",
+        "course_id": 1,
+        "grade": null,
+        "enrolled_date": "2026-07-23"
+    },
+    {
+        "enrollment_id": 20,
+        "student_id": "S01",
+        "course_id": 2,
+        "grade": null,
+        "enrolled_date": "2026-07-23"
     }
 ]
