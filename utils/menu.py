@@ -250,18 +250,15 @@ def show_student_menu(student_id):
         if choice == "1":
             student = admin_service.get_student_by_id(student_id)  # matches actual method name
             studet_service.view_profile(student)
-            return
         
         elif choice == "2":
             print("Available Courses: ")
             print(admin_service.view_courses())
-            return
         
         elif choice == "3":
             print("View my GPA rank.")
             student = admin_service.get_student_by_id(student_id)
             studet_service.view_rank_by_gpa(student_id)
-            return
 
         elif choice == "4":
             print("Going back to Main Menu...")
