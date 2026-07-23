@@ -1,5 +1,5 @@
 [
-  {"user_id": 1,  "username": "nim.c",   "password": "changeme123", "role": "student", "linked_student_id": 1},
+  {"user_id": 1,  "username": "nim.c",   "password": "123", "role": "student", "linked_student_id": 1},
   {"user_id": 2,  "username": "sok.d",   "password": "changeme123", "role": "student", "linked_student_id": 2},
   {"user_id": 3,  "username": "chan.v",  "password": "changeme123", "role": "student", "linked_student_id": 3},
   {"user_id": 4,  "username": "lim.so",  "password": "changeme123", "role": "student", "linked_student_id": 4},

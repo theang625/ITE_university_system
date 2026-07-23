@@ -14,8 +14,8 @@ def main():
             print("Please enter admin username and password.")
             username = input("Enter your username: ")
             password = input("Enter your password: ")
-            admins = get_admins()
-            login_account = login(username, password, admins)
+           
+            login_account = login(username, password)
             if not login_account: 
                 return show_main_menu()
             
@@ -34,7 +34,7 @@ def main():
         
         else:
             print("Invalid choice")
-    
+                  
 if __name__ == "__main__":
     
     main()

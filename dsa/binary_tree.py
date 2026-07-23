@@ -1,3 +1,9 @@
+from fileinput import filename
+import json
+
+from models import student
+
+
 class Node:
     def __init__(self, value):
         self.value = value
@@ -74,3 +80,41 @@ class BinaryTree:
         while current.left is not None:
             current = current.left
         return current
+    def load_students_from_json(tree, filename="students.json"):
+        # Clear the old tree
+        tree.root = None
+
+        with open(filename, "r") as file:
+            students = json.load(file)
+
+        for student in students:
+            # Change "student_id" if your JSON uses another key
+            tree.insert(student["student_id"], student)
+
+        print(f"{len(students)} students loaded into Binary Tree.")
+        def print_student(student):
+            if student is None:
+                print("Student not found.")
+            return
+
+            print("\n===== Student Information =====")
+            print(f"ID      : {student['student_id']}")
+            print(f"Name    : {student['name']}")
+            print(f"Gender  : {student['gender']}")
+            print(f"Age     : {student['age']}")
+            print(f"Major   : {student['major']}")
+            print(f"Year    : {student['year']}")
+            print(f"GPA     : {student['gpa']}")
+            print(f"Email   : {student['email']}")
+            print(f"Phone   : {student['phone']}")
+        def search_student(tree):
+            student_id = int(input("Enter Student ID: "))
+
+            student = tree.search(student_id)
+            
+            print_student(student)
+        def print_all_students(tree):
+            print("\n===== Student List =====")
+
+            for key, student in tree.inorder():
+                print(f"{student['student_id']} | {student['name']} | GPA: {student['gpa']}")
