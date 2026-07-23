@@ -84,6 +84,18 @@ class BinaryTree:
             self._inorder(node.left, result)
             result.append((node.key, node.value))
             self._inorder(node.right, result)
+            
+    def reverse_inorder(self):
+        """Returns list of (key, value) pairs sorted by key DESCENDING (right -> node -> left)."""
+        result = []
+        self._reverse_inorder(self.root, result)
+        return result
+
+    def _reverse_inorder(self, node, result):
+        if node:
+            self._reverse_inorder(node.right, result)   # right first = bigger values first
+            result.append((node.key, node.value))
+            self._reverse_inorder(node.left, result)
 
     # ---------- LOAD FROM JSON ----------
     def load_from_json(self, file_path, key_field):
