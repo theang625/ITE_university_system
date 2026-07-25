@@ -69,7 +69,7 @@ class AdminService:
             course = req.get("course_id")
             prerequisite = req.get("requires_course_id")
             if course and prerequisite:
-                self.prereq_graph.add_edge(prerequisite, course)
+                self.prereq_graph.add_edge(course, prerequisite)
 
     def _load_enrollments_from_json(self):
  

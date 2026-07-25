@@ -2,16 +2,16 @@ from models.student import Student
 from dsa.hash_table import HashTable
 from dsa.binary_tree import BinaryTree
 from models.enrollment import Enrollment
-from services.admin_service import AdminService
 from datetime import datetime
 from dsa.graph import Graph
+
+
 class StudentService:
     def __init__(self, admin_service):
         self.students_table = HashTable()
         self._load_students_from_json()
         self.course_graph = Graph()
-        
-    admin_service = AdminService()        
+        self.admin_service = admin_service  # shared reference, not a new instance
 
     def _load_students_from_json(self):
         students = Student.load_students()
@@ -19,7 +19,7 @@ class StudentService:
             self.students_table.insertion(s["student_id"], s)
 
     def view_profile(self, student):
-        
+
         if not student:
             print("\nError: Profile not found.\n")
             return
@@ -48,9 +48,9 @@ class StudentService:
 
         print("=" * 45)
         print()
-        
+
     def view_rank_by_gpa(self, student_id=None):
-        
+
         students = Student.load_students()
 
         if not students:
@@ -62,9 +62,9 @@ class StudentService:
             gpa = s["gpa"]
             existing = gpa_tree.search(gpa)
             if existing is not None:
-                existing.append(s)        
+                existing.append(s)
             else:
-                gpa_tree.insert(gpa, [s]) 
+                gpa_tree.insert(gpa, [s])
 
         sorted_by_gpa = gpa_tree.reverse_inorder()
 
@@ -73,7 +73,7 @@ class StudentService:
         for gpa, student_group in sorted_by_gpa:
             for s in student_group:
                 ranked_list.append((rank, s))
-            rank += len(student_group) 
+            rank += len(student_group)
 
         print("=" * 50)
         print("STUDENT RANKING BY GPA".center(50))
@@ -92,7 +92,7 @@ class StudentService:
             return None
 
         return ranked_list
-    
+
     def enroll_self(self, student_id):
 
         student = self.admin_service.get_student_by_id(student_id)
@@ -125,7 +125,6 @@ class StudentService:
             print(f"   ID: {course['course_id']:<4} | {course['course_name']}{tag}")
         print("-" * 50)
 
-        # 4. Ask for multiple course IDs at once
         courses_input = input("Enter Course IDs to enroll, separated by commas (e.g., 1, 3, 5): ")
         try:
             requested_ids = [int(c.strip()) for c in courses_input.split(",") if c.strip()]
@@ -137,7 +136,6 @@ class StudentService:
             print("No course IDs entered.")
             return False
 
-        # 5. Load enrollments once, before the loop (avoid repeated file reads)
         enrollments = Enrollment.load_enrollments()
         next_id = (max((e["enrollment_id"] for e in enrollments), default=0)) + 1
 
@@ -145,21 +143,23 @@ class StudentService:
         skipped = []
 
         for course_id in requested_ids:
-            # Skip if already enrolled
             if course_id in current_course_ids:
                 skipped.append((course_id, "already enrolled"))
                 continue
 
-            # Skip if course doesn't exist
             course = self.admin_service.courses_tree.search(course_id)
             if not course:
                 skipped.append((course_id, "course not found"))
                 continue
 
-            # Add edge in the graph (memory)
+            required = self.admin_service.prereq_graph.get_neighbors(course_id)
+            missing = [req for req in required if req not in current_course_ids]
+            if missing:
+                skipped.append((course_id, f"missing prerequisite {missing[0]}"))
+                continue
+
             self.admin_service.enrollment_graph.add_edge(student_id, course_id)
 
-            # Build the new enrollment record
             new_enrollment = {
                 "enrollment_id": next_id,
                 "student_id": student_id,
@@ -171,12 +171,10 @@ class StudentService:
             next_id += 1
 
             enrolled_now.append(course)
-            current_course_ids.append(course_id)  # so duplicate checks within this same loop stay accurate
+            current_course_ids.append(course_id)
 
-        # 6. Save once, after processing all requested courses
         Enrollment.save_enrollments(enrollments)
 
-        # 7. Summary
         print("\n" + "=" * 50)
         if enrolled_now:
             print(f"Successfully enrolled in {len(enrolled_now)} course(s):")
@@ -189,4 +187,3 @@ class StudentService:
         print("=" * 50)
 
         return True
-    
