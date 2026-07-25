@@ -2,7 +2,6 @@ import math
 import json
 import os
 
-
 class HashTable:
     def __init__(self, size=20):
         self.size = size
@@ -30,7 +29,7 @@ class HashTable:
             if k == key:
                 bucket[i] = (key, value)
                 return
-
+            
         bucket.append((key, value))
         self.count += 1
 
