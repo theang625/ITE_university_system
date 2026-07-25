@@ -9,7 +9,7 @@
     {
         "user_id": 2,
         "username": "sok.d",
-        "password": "changeme123",
+        "password": "me",
         "role": "student",
         "linked_student_id": "S02"
     },

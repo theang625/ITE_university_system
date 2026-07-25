@@ -93,100 +93,107 @@ class StudentService:
 
         return ranked_list
     
-    def enroll_self(self, student_id):
+def enroll_self(self, student_id):
 
-        student = self.admin_service.get_student_by_id(student_id)
-        if not student:
-            print("Error: Student profile not found.")
-            return False
+    student = self.admin_service.get_student_by_id(student_id)
+    if not student:
+        print("Error: Student profile not found.")
+        return False
 
-        current_course_ids = self.admin_service.enrollment_graph.get_neighbors(student_id)
+    current_course_ids = self.admin_service.enrollment_graph.get_neighbors(student_id)
 
-        print(f"\nWelcome, {student['name']}!")
-        print("Your current courses:")
-        if not current_course_ids:
-            print("   [No courses registered yet]")
-        else:
-            for c_id in current_course_ids:
-                course = self.admin_service.courses_tree.search(c_id)
-                if course:
-                    print(f"   - ID: {course['course_id']} | {course['course_name']}")
+    print(f"\nWelcome, {student['name']}!")
+    print("Your current courses:")
+    if not current_course_ids:
+        print("   [No courses registered yet]")
+    else:
+        for c_id in current_course_ids:
+            course = self.admin_service.courses_tree.search(c_id)
+            if course:
+                print(f"   - ID: {course['course_id']} | {course['course_name']}")
 
-        all_courses = [c for _, c in self.admin_service.courses_tree.inorder()]
+    all_courses = [c for _, c in self.admin_service.courses_tree.inorder()]
 
-        if not all_courses:
-            print("No courses available right now.")
-            return False
+    if not all_courses:
+        print("No courses available right now.")
+        return False
 
-        print("\nAVAILABLE COURSES".center(50))
-        print("-" * 50)
-        for course in all_courses:
-            tag = " (already enrolled)" if course["course_id"] in current_course_ids else ""
-            print(f"   ID: {course['course_id']:<4} | {course['course_name']}{tag}")
-        print("-" * 50)
+    print("\nAVAILABLE COURSES".center(50))
+    print("-" * 50)
+    for course in all_courses:
+        tag = " (already enrolled)" if course["course_id"] in current_course_ids else ""
+        print(f"   ID: {course['course_id']:<4} | {course['course_name']}{tag}")
+    print("-" * 50)
 
-        # 4. Ask for multiple course IDs at once
-        courses_input = input("Enter Course IDs to enroll, separated by commas (e.g., 1, 3, 5): ")
-        try:
-            requested_ids = [int(c.strip()) for c in courses_input.split(",") if c.strip()]
-        except ValueError:
-            print("Invalid input. Please enter numeric course IDs separated by commas.")
-            return False
+    # 4. Ask for multiple course IDs at once
+    courses_input = input("Enter Course IDs to enroll, separated by commas (e.g., 1, 3, 5): ")
+    try:
+        requested_ids = [int(c.strip()) for c in courses_input.split(",") if c.strip()]
+    except ValueError:
+        print("Invalid input. Please enter numeric course IDs separated by commas.")
+        return False
 
-        if not requested_ids:
-            print("No course IDs entered.")
-            return False
+    if not requested_ids:
+        print("No course IDs entered.")
+        return False
 
-        # 5. Load enrollments once, before the loop (avoid repeated file reads)
-        enrollments = Enrollment.load_enrollments()
-        next_id = (max((e["enrollment_id"] for e in enrollments), default=0)) + 1
+    # 5. Load enrollments once, before the loop (avoid repeated file reads)
+    enrollments = Enrollment.load_enrollments()
+    next_id = (max((e["enrollment_id"] for e in enrollments), default=0)) + 1
 
-        enrolled_now = []
-        skipped = []
+    enrolled_now = []
+    skipped = []
 
-        for course_id in requested_ids:
-            # Skip if already enrolled
-            if course_id in current_course_ids:
-                skipped.append((course_id, "already enrolled"))
-                continue
+    for course_id in requested_ids:
+        # Skip if already enrolled
+        if course_id in current_course_ids:
+            skipped.append((course_id, "already enrolled"))
+            continue
 
-            # Skip if course doesn't exist
-            course = self.admin_service.courses_tree.search(course_id)
-            if not course:
-                skipped.append((course_id, "course not found"))
-                continue
+        # Skip if course doesn't exist
+        course = self.admin_service.courses_tree.search(course_id)
+        if not course:
+            skipped.append((course_id, "course not found"))
+            continue
 
-            # Add edge in the graph (memory)
-            self.admin_service.enrollment_graph.add_edge(student_id, course_id)
+        # Skip if the direct prerequisite hasn't been completed
+        required = self.admin_service.prereq_graph.get_neighbors(course_id)
+        missing = [req for req in required if req not in current_course_ids]
+        if missing:
+            skipped.append((course_id, f"missing prerequisite {missing[0]}"))
+            continue
 
-            # Build the new enrollment record
-            new_enrollment = {
-                "enrollment_id": next_id,
-                "student_id": student_id,
-                "course_id": course_id,
-                "grade": None,
-                "enrolled_date": datetime.now().strftime("%Y-%m-%d")
-            }
-            enrollments.append(new_enrollment)
-            next_id += 1
+        # Add edge in the graph (memory)
+        self.admin_service.enrollment_graph.add_edge(student_id, course_id)
 
-            enrolled_now.append(course)
-            current_course_ids.append(course_id)  # so duplicate checks within this same loop stay accurate
+        # Build the new enrollment record
+        new_enrollment = {
+            "enrollment_id": next_id,
+            "student_id": student_id,
+            "course_id": course_id,
+            "grade": None,
+            "enrolled_date": datetime.now().strftime("%Y-%m-%d")
+        }
+        enrollments.append(new_enrollment)
+        next_id += 1
 
-        # 6. Save once, after processing all requested courses
-        Enrollment.save_enrollments(enrollments)
+        enrolled_now.append(course)
+        current_course_ids.append(course_id)  # so duplicate checks within this same loop stay accurate
 
-        # 7. Summary
-        print("\n" + "=" * 50)
-        if enrolled_now:
-            print(f"Successfully enrolled in {len(enrolled_now)} course(s):")
-            for c in enrolled_now:
-                print(f"   - {c['course_id']}: {c['course_name']}")
-        if skipped:
-            print(f"\nSkipped {len(skipped)} course(s):")
-            for c_id, reason in skipped:
-                print(f"   - {c_id}: {reason}")
-        print("=" * 50)
+    # 6. Save once, after processing all requested courses
+    Enrollment.save_enrollments(enrollments)
 
-        return True
+    # 7. Summary
+    print("\n" + "=" * 50)
+    if enrolled_now:
+        print(f"Successfully enrolled in {len(enrolled_now)} course(s):")
+        for c in enrolled_now:
+            print(f"   - {c['course_id']}: {c['course_name']}")
+    if skipped:
+        print(f"\nSkipped {len(skipped)} course(s):")
+        for c_id, reason in skipped:
+            print(f"   - {c_id}: {reason}")
+    print("=" * 50)
+
+    return True
     

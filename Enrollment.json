@@ -145,5 +145,12 @@
         "course_id": 2,
         "grade": null,
         "enrolled_date": "2026-07-23"
+    },
+    {
+        "enrollment_id": 21,
+        "student_id": "S02",
+        "course_id": 6,
+        "grade": null,
+        "enrolled_date": "2026-07-25"
     }
 ]
